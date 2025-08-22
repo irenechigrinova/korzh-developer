@@ -1,0 +1,16 @@
+.age {
+  background-color: #1B1212;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  dialog p {
+    width: 600px;
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+}

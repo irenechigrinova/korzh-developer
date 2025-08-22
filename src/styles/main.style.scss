@@ -1,0 +1,36 @@
+html,
+body {
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+  font-family: "Press Start 2P", system-ui;
+  font-weight: 400;
+  font-style: normal;
+}
+
+section {
+  width: 100vw;
+  height: 100vh;
+}
+
+.powered {
+  position: fixed;
+  bottom: 70px;
+  right: -70px;
+  z-index: 99;
+  display: flex;
+  white-space: nowrap;
+  font-size: 10px;
+  align-items: center;
+  color: #fff;
+  transform: rotate(90deg);
+
+  svg {
+    width: 40px;
+    transform: rotate(-90deg);
+
+    path {
+      fill: #fff;
+    }
+  }
+}

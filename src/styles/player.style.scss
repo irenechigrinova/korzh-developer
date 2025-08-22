@@ -1,0 +1,46 @@
+#player {
+  width: 120px;
+  height: 120px;
+  position: absolute;
+  z-index: 8;
+  left: 0;
+  bottom: 73px;
+  background-image: url('korzh_sprite_2.png');
+  background-size: 525px;
+  background-repeat: no-repeat;
+  background-position: 0 0;
+
+  &.idle {
+    animation: idle 1s linear infinite;
+  }
+
+  &.running {
+    background-position: -250px 0;
+    animation: run 400ms linear infinite;
+  }
+
+  &.hide {
+    animation: hide 600ms linear forwards;
+  }
+}
+
+@keyframes idle {
+  0%, 50% { background-position: 0 0; }
+  50.01%, 65% { background-position: -119px 0; }
+  65.01%, 100% { background-position: 0 0; }
+}
+
+@keyframes run {
+  0%, 50% { background-position: -250px 0; }
+  50.01%, 60% { background-position: -380px 0; }
+  60.01%, 100% { background-position: -250px 0; }
+}
+
+@keyframes hide {
+  from {
+    background-position: 0px 0px;
+  }
+  to {
+    background-position: 120px 0px;
+  }
+}
