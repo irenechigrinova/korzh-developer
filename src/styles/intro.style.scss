@@ -1,0 +1,52 @@
+.intro {
+  background-color: #1B1212;
+  color: #fff;
+
+  .text-wrapper {
+    width: 600px;
+    margin: auto;
+    padding-top: 5%;
+  }
+
+  .images {
+    display: flex;
+    margin-top: 16px;
+    margin-bottom: 32px;
+
+    img {
+      width: 60px;
+      position: relative;
+      opacity: 0;
+    }
+
+    .husband {
+      left: 270px;
+    }
+
+    .serpentarium {
+      left: 377px;
+    }
+  }
+
+  .line {
+    text-align: center !important;
+  }
+
+  .cat {
+    justify-content: center;
+  }
+
+  .title {
+    display: flex;
+    justify-content: center;
+    font-size: 40px;
+    margin-top: 40px;
+  }
+
+  .hint {
+    margin-top: 40px;
+    font-size: 10px;
+    display: flex;
+    justify-content: center;
+  }
+}

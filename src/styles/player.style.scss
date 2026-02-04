@@ -1,0 +1,238 @@
+#player {
+  width: 77px;
+  height: 120px;
+  position: absolute;
+  z-index: 8;
+  left: 0;
+  bottom: 80px;
+}
+
+.middle {
+  background-image: url('middle-sprite.png');
+  background-size: 353px;
+  background-repeat: no-repeat;
+  background-position: 0 6px;
+
+  &.idle {
+    animation: idle 1s linear infinite;
+  }
+
+  &.running {
+    background-position: -155px 6px;
+    animation: run 300ms linear infinite;
+  }
+
+  &.jumping {
+    background-position: -245px 6px;
+  }
+
+  &.hide {
+    animation: hide 600ms linear forwards;
+  }
+
+  &.dead {
+    animation: die 1600ms ease-out forwards;
+    animation-delay: 500ms;
+    background-image: url('player-dead.png');
+    background-size: 50px;
+    background-position: 15px 48px;
+  }
+}
+
+.to-senior {
+  animation: toSenior 1s linear forwards;
+  background-size: 353px;
+  background-repeat: no-repeat;
+  background-position: 0 6px;
+}
+
+.to-middle {
+  animation: toMiddle 1s linear forwards;
+  background-size: 353px;
+  background-repeat: no-repeat;
+  background-position: 0 6px;
+}
+
+.senior {
+  background-image: url('senior-sprite-2.png');
+  background-size: 353px;
+  background-repeat: no-repeat;
+  background-position: 0 6px;
+
+  &.idle {
+    animation: idle 1s linear infinite;
+  }
+
+  &.running {
+    background-position: -155px 6px;
+    animation: run 300ms linear infinite;
+  }
+
+  &.jumping {
+    background-position: -245px 6px;
+  }
+
+  &.hide {
+    animation: hide 600ms linear forwards;
+  }
+
+  &.dead {
+    animation: die 1600ms ease-out forwards;
+    animation-delay: 500ms;
+    background-image: url('player-dead.png');
+    background-size: 50px;
+    background-position: 15px 48px;
+  }
+}
+
+.fireball {
+  width: 30px;
+  height: 30px;
+  position: absolute;
+  bottom: 80px;
+
+  &::before {
+    content: "";
+    width: 100%;
+    height: 100%;
+    display: block;
+    background-image: url('fireball.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: 0 0;
+    position: relative;
+    animation: rolling 800ms linear infinite;
+    z-index: 1;
+  }
+
+  &::after {
+    content: "МР";
+    font-size: 10px;
+    color: #000;
+    position: absolute;
+    top: 10px;
+    left: 6px;
+    z-index: 2;
+  }
+
+  &.boom {
+    animation: boom 150ms ease-in forwards;
+
+    &::before {
+      animation: none;
+    }
+
+    &::after {
+      display: none;
+    }
+  }
+}
+
+@keyframes die {
+  0% {
+    bottom: 80px;
+  }
+  20% {
+    bottom: 100px;
+  }
+  100% {
+    bottom: -1000px;
+  }
+}
+
+@keyframes boom {
+  from {
+    opacity: 1;
+    width: 30px;
+    height: 30px;
+    bottom: 90px;
+  }
+  to {
+    opacity: 0;
+    width: 40px;
+    height: 40px;
+    bottom: 80px;
+  }
+}
+
+@keyframes rolling {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes toSenior {
+  0%, 30% {
+    background-image: url('middle-sprite.png');
+    background-size: 353px;
+    background-repeat: no-repeat;
+    background-position: 0 6px;
+    opacity: 1;
+  }
+  40% {
+    opacity: 0.4;
+  }
+  60% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 0.6;
+  }
+  100% {
+    background-image: url('senior-sprite-2.png');
+    background-size: 353px;
+    background-repeat: no-repeat;
+    background-position: 0 6px;
+    opacity: 1;
+  }
+}
+
+@keyframes toMiddle {
+  0%, 30% {
+    background-image: url('senior-sprite-2.png');
+    background-size: 353px;
+    background-repeat: no-repeat;
+    background-position: 0 6px;
+    opacity: 1;
+  }
+  40% {
+    opacity: 0.4;
+  }
+  60% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 0.6;
+  }
+  100% {
+    background-image: url('middle-sprite.png');
+    background-size: 353px;
+    background-repeat: no-repeat;
+    background-position: 0 6px;
+    opacity: 1;
+  }
+}
+
+@keyframes idle {
+  0%, 50% { background-position: 0 6px; }
+  50.01%, 65% { background-position: -77px 6px; }
+  65.01%, 100% { background-position: 0 6px; }
+}
+
+@keyframes run {
+  0%, 50% { background-position: -155px 6px; }
+  50.01%, 70% { background-position: -77px 6px; }
+  70.01%, 100% { background-position: -155px 6px; }
+}
+
+@keyframes hide {
+  from {
+    background-position: 0px 6px;
+  }
+  to {
+    background-position: 77px 6px;
+  }
+}

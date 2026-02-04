@@ -1,0 +1,130 @@
+.bug {
+  width: 65px;
+  height: 45px;
+  bottom: 80px;
+  background-image: url(./enemies/jira-bug.png);
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: 0 0;
+
+  &.active {
+    animation: bugMove 600ms linear infinite;
+
+    .enemy-score {
+      opacity: 0;
+    }
+  }
+
+  &.destroyed {
+    background-position: -134px 0;
+    animation: bugDie 600ms ease-out 480ms forwards !important;
+  }
+}
+
+.enemy-score {
+  bottom: -30px;
+}
+
+.task {
+  width: 76px;
+  height: 80px;
+  bottom: 80px;
+  background-image: url(./enemies/jira-task.png);
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: 0 0;
+
+  &.active {
+    animation: taskMove 400ms linear infinite;
+
+    .enemy-score {
+      opacity: 0;
+    }
+  }
+
+  &.destroyed {
+    background-position: -212px 0;
+    animation: taskDie 600ms ease-out 480ms forwards !important;
+  }
+}
+
+.destroyed {
+  transition: transform 400ms;
+
+
+  &.left .enemy-score {
+    animation: showScoreLeft 1200ms ease-in-out 200ms forwards;
+  }
+
+  &.right .enemy-score {
+    animation: showScoreRight 1200ms ease-in-out 200ms forwards;
+  }
+}
+
+.die {
+  animation: unset !important;
+  transition: bottom 800ms;
+  bottom: -200px; 
+}
+
+@keyframes showScoreLeft {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0);
+  }
+  20% {
+    opacity: 1;
+  }
+  90% {
+    transform: translate(0, -100px);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(0, -100px);
+  }
+}
+
+@keyframes showScoreRight {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) scale(-1, 1);
+  }
+  20% {
+    opacity: 1;
+  }
+  90% {
+    transform: translate(0, -100px) scale(-1, 1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(0, -100px) scale(-1, 1);
+  }
+}
+
+@keyframes taskMove {
+  0%, 50% { background-position: 0 0; }
+  50.01%, 100% { background-position: -103px 0; }
+}
+
+@keyframes bugMove {
+  0%, 50% { background-position: 0 0; }
+  50.01%, 100% { background-position: -67px 0; }
+}
+
+@keyframes bugDie {
+  0% {
+    background-position: -134px 0;
+  }
+  100% {
+    background-position: -134px 160px;
+  }
+}
+
+@keyframes taskDie {
+  0% {
+    background-position: -212px 0;
+  }
+  100% {
+    background-position: -212px 160px;
+  }
+}
