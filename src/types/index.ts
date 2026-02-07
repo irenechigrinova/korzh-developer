@@ -1,8 +1,8 @@
 import { BaseScene } from '@/base/BaseScene';
 import { Enemy } from '@/base/Enemy';
-import { Boss } from '@/controllers/enemies/Boss';
 import { Obstacle } from '@/base/Obstacle';
 import { POSITION_CONFIG } from '@/base/utils';
+import { Boss } from '@/controllers/enemies/Boss';
 
 export type TLevel = '18+' | 'intro' | '1' | '2' | '3' | 'outro';
 
@@ -42,6 +42,7 @@ export interface ILevel extends BaseScene {
   name: TLevel;
   addEnemies?: (enemies: Enemy[]) => void;
   removeEnemy?: (id: string) => void;
+  restart?: () => void;
 }
 
 export type TMovementParams = {

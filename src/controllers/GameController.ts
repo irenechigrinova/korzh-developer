@@ -102,7 +102,7 @@ export class GameController {
     div.className = 'dialog-container';
     div.innerHTML = `
       <dialog class="nes-dialog is-rounded" id="dialog-rounded" open="">
-        <form method="dialog">
+        <form method="dialog" id="you-are-dead">
           ${this.renderDieItem()}
           <menu class="dialog-menu">
             <button class="nes-btn is-primary">Заново</button>
@@ -112,20 +112,36 @@ export class GameController {
     `;
     const handleEnter = (e: KeyboardEvent) => {
       if (e.key === 'Enter') {
-        this.setLevel(this.state.curLevel!.name);
         this.state.paused = false;
         this.state.score = 0;
         this.state.playerLevel = 'middle';
+        this.renderScore();
         document.body.querySelector('.dialog-container')!.remove();
         document.body.removeEventListener('keyup', handleEnter);
+        this.state.curLevel?.restart?.();
+        this.player = new Player(
+          this.state.curLevel as ILevel,
+          () => this.getPlayerLevel(),
+          (num: number) => this.setScore(num),
+          () => {
+            this.state.playerLevel = 'middle';
+            this.state.score -= 1000;
+            this.renderScore();
+            this.callLeadAbility?.destroy();
+          },
+          () => this.playerDead(),
+        );
+        this.player.init();
       }
     };
     document.body.appendChild(div);
     document.body.addEventListener('keyup', handleEnter);
-    document.body.querySelector('form')?.addEventListener('submit', (e) => {
-      e.preventDefault();
-      handleEnter({ key: 'Enter' } as KeyboardEvent);
-    });
+    document.body
+      .querySelector('#you-are-dead')
+      ?.addEventListener('submit', (e) => {
+        e.preventDefault();
+        handleEnter({ key: 'Enter' } as KeyboardEvent);
+      });
   }
 
   private handleFatality(isOn: boolean) {

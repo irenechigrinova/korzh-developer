@@ -116,7 +116,6 @@ export class Intro extends BaseScene {
   }
 
   private handleEnter(e: KeyboardEvent) {
-    console.log('QQQQQQQQQQ');
     if (e.code === 'Enter' && this.hasSeenOnce) {
       this.nextLevel();
     } else {
