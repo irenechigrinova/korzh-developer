@@ -42,7 +42,7 @@ export class Enemy extends Movement {
   setStyles() {
     if (!this.node) return;
 
-    this.node.style.transform = `translate(${this.left}px, ${this.bottom}px) scale(${this.moveDirection === 'left' ? '1' : '-1, 1'})`;
+    this.node.style.transform = `translate(${this.left}px, ${-this.bottom}px) scale(${this.moveDirection === 'left' ? '1' : '-1, 1'})`;
     this.node.classList.remove('left');
     this.node.classList.remove('right');
     this.node.classList.add(this.moveDirection);
@@ -87,6 +87,19 @@ export class Enemy extends Movement {
       this.node!.remove();
       this.destroyInLevel(this.getId());
     }, 1000);
+  }
+
+  explode(): void {
+    if (!this.node) return;
+
+    this.node.classList.add('explode');
+    this.node.classList.remove('active');
+    this.node.classList.remove('enemy');
+    this.node.classList.remove('bug');
+    this.node.classList.remove('task');
+    setTimeout(() => {
+      this.die();
+    }, 3000);
   }
 
   hit() {

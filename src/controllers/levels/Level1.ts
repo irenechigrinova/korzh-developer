@@ -4,16 +4,22 @@ import '../../styles/level1.style.scss';
 import '../../styles/enemies.style.scss';
 import { Enemy } from '@/base/Enemy';
 import { Obstacle } from '@/base/Obstacle';
+import { Boss } from '@/controllers/enemies/Boss';
 import { Bug } from '@/controllers/enemies/Bug';
 import { Task } from '@/controllers/enemies/Task';
+import { TBoss, TLevel } from '@/types';
 
 export class Level1 extends BaseScene {
   private bgOffset: number;
   private obstacles: Record<number, Obstacle[]>;
-  private enemies: Record<number, Enemy[]>;
+  private enemies: Record<number, (Enemy | Boss)[]>;
   private onChangeScene: () => void;
+  private isBossIntro: boolean;
+  private bossesShown: TBoss[];
+  private startLevel: () => void;
 
   score: (num: number) => void;
+  name: TLevel;
 
   private removeObstacle(id: string) {
     this.obstacles = {
@@ -25,7 +31,7 @@ export class Level1 extends BaseScene {
     document.querySelector(`#obs-${id}`)?.remove();
   }
 
-  private removeEnemy(id: string) {
+  public removeEnemy(id: string) {
     this.enemies = {
       ...this.enemies,
       [this.bgOffset]: this.enemies[this.bgOffset].filter(
@@ -35,12 +41,34 @@ export class Level1 extends BaseScene {
     document.querySelector(`#enemy-${id}`)?.remove();
   }
 
-  constructor(nextLevel: () => void, score: (num: number) => void, onChangeScene: () => void) {
+  private onShowBoss() {
+    this.isBossIntro = true;
+    this.bossesShown.push('petya');
+    // (document.querySelector('#main-audio') as HTMLAudioElement)!.pause();
+    // (document.querySelector('#boss-appearance-audio') as HTMLAudioElement)!.play();
+    setTimeout(() => {
+      // (document.querySelector('#boss-appearance-audio') as HTMLAudioElement)!.pause();
+      // (document.querySelector('#boss-appearance-audio') as HTMLAudioElement)!.currentTime = 0;
+      // (document.querySelector('#main-audio') as HTMLAudioElement)!.play();
+      this.isBossIntro = false;
+    }, 7000);
+  }
+
+  constructor(
+    nextLevel: () => void,
+    score: (num: number) => void,
+    onChangeScene: () => void,
+    startLevel: () => void,
+  ) {
     super(nextLevel);
 
     this.score = score;
     this.bgOffset = 0;
     this.onChangeScene = onChangeScene;
+    this.name = '1';
+    this.isBossIntro = false;
+    this.bossesShown = [];
+    this.startLevel = startLevel;
 
     this.obstacles = {
       '-7200': [
@@ -277,165 +305,185 @@ export class Level1 extends BaseScene {
     };
 
     this.enemies = {
-      // '-6000': [
-      //   new Bug(
-      //     this,
-      //     (num: number) => this.score(num),
-      //     (id: string) => this.removeEnemy(id),
-      //     { left: 330 },
-      //   ),
-      //   new Bug(
-      //     this,
-      //     (num: number) => this.score(num),
-      //     (id: string) => this.removeEnemy(id),
-      //     { left: 600, moveDirection: 'right' },
-      //   ),
-      //   new Task(
-      //     this,
-      //     (num: number) => this.score(num),
-      //     (id: string) => this.removeEnemy(id),
-      //     { left: 1000 },
-      //   ),
-      // ],
-      // '-3600': [
-      //   new Bug(
-      //     this,
-      //     (num: number) => this.score(num),
-      //     (id: string) => this.removeEnemy(id),
-      //     { bottom: -183, jumpDirection: 'down', left: 750 },
-      //   ),
-      //   new Bug(
-      //     this,
-      //     (num: number) => this.score(num),
-      //     (id: string) => this.removeEnemy(id),
-      //     { bottom: -183, jumpDirection: 'down', left: 450 },
-      //   ),
-      // ],
-      // '-2400': [
-      //   new Bug(
-      //     this,
-      //     (num: number) => this.score(num),
-      //     (id: string) => this.removeEnemy(id),
-      //     { jumpDirection: 'down', left: 900 },
-      //   ),
-      //   new Bug(
-      //     this,
-      //     (num: number) => this.score(num),
-      //     (id: string) => this.removeEnemy(id),
-      //     { jumpDirection: 'down', left: 800 },
-      //   ),
-      //   new Bug(
-      //     this,
-      //     (num: number) => this.score(num),
-      //     (id: string) => this.removeEnemy(id),
-      //     { jumpDirection: 'down', left: 320 },
-      //   ),
-      //   new Task(
-      //     this,
-      //     (num: number) => this.score(num),
-      //     (id: string) => this.removeEnemy(id),
-      //     {
-      //       bottom: -183,
-      //       jumpDirection: 'down',
-      //       left: 700,
-      //     },
-      //   ),
-      //   new Task(
-      //     this,
-      //     (num: number) => this.score(num),
-      //     (id: string) => this.removeEnemy(id),
-      //     {
-      //       bottom: -353,
-      //       jumpDirection: 'down',
-      //       left: 700,
-      //       moveDirection: 'right',
-      //     },
-      //   ),
-      // ],
-      // '-1200': [
-      //   new Bug(
-      //     this,
-      //     (num: number) => this.score(num),
-      //     (id: string) => this.removeEnemy(id),
-      //     { bottom: -80, jumpDirection: 'down', left: 640 },
-      //   ),
-      //   new Bug(
-      //     this,
-      //     (num: number) => this.score(num),
-      //     (id: string) => this.removeEnemy(id),
-      //     {
-      //       bottom: -80,
-      //       jumpDirection: 'down',
-      //       left: 680,
-      //       moveDirection: 'right',
-      //     },
-      //   ),
-      //   new Bug(
-      //     this,
-      //     (num: number) => this.score(num),
-      //     (id: string) => this.removeEnemy(id),
-      //     {
-      //       bottom: -600,
-      //       jumpDirection: 'down',
-      //       left: 800,
-      //       moveDirection: 'right',
-      //     },
-      //     2000,
-      //   ),
-      //   new Bug(
-      //     this,
-      //     (num: number) => this.score(num),
-      //     (id: string) => this.removeEnemy(id),
-      //     { bottom: -600, isJumping: true, jumpDirection: 'up', left: 400 },
-      //     1000
-      //   ),
-      //   new Task(
-      //     this,
-      //     (num: number) => this.score(num),
-      //     (id: string) => this.removeEnemy(id),
-      //     {
-      //       bottom: -183,
-      //       jumpDirection: 'down',
-      //       left: 850,
-      //     },
-      //   ),
-      //   new Task(
-      //     this,
-      //     (num: number) => this.score(num),
-      //     (id: string) => this.removeEnemy(id),
-      //     {
-      //       left: 300,
-      //     },
-      //   ),
-      // ],
-      // 0: [
-      //   new Bug(
-      //     this,
-      //     (num: number) => this.score(num),
-      //     (id: string) => this.removeEnemy(id),
-      //   ),
-      //   new Bug(
-      //     this,
-      //     (num: number) => this.score(num),
-      //     (id: string) => this.removeEnemy(id),
-      //     {},
-      //     1000,
-      //   ),
-      //   new Task(
-      //     this,
-      //     (num: number) => this.score(num),
-      //     (id: string) => this.removeEnemy(id),
-      //     {},
-      //     2500,
-      //   ),
-      //   new Bug(
-      //     this,
-      //     (num: number) => this.score(num),
-      //     (id: string) => this.removeEnemy(id),
-      //     {},
-      //     4000,
-      //   ),
-      // ],
+      '-6000': [
+        new Bug(
+          this,
+          (num: number) => this.score(num),
+          (id: string) => this.removeEnemy(id),
+          { left: 330 },
+        ),
+        new Bug(
+          this,
+          (num: number) => this.score(num),
+          (id: string) => this.removeEnemy(id),
+          { left: 600, moveDirection: 'right' },
+        ),
+        new Task(
+          this,
+          (num: number) => this.score(num),
+          (id: string) => this.removeEnemy(id),
+          { left: 1000 },
+        ),
+      ],
+      '-3600': [
+        new Bug(
+          this,
+          (num: number) => this.score(num),
+          (id: string) => this.removeEnemy(id),
+          { bottom: 183, jumpDirection: 'down', left: 750 },
+        ),
+        new Bug(
+          this,
+          (num: number) => this.score(num),
+          (id: string) => this.removeEnemy(id),
+          { bottom: 183, jumpDirection: 'down', left: 450 },
+        ),
+        new Boss('petya', () => this.onShowBoss()),
+        new Task(
+          this,
+          (num: number) => this.score(num),
+          (id: string) => this.removeEnemy(id),
+          { left: 560 },
+          7300,
+        ),
+        new Task(
+          this,
+          (num: number) => this.score(num),
+          (id: string) => this.removeEnemy(id),
+          { bottom: 0, left: 560, moveDirection: 'left' },
+          7600,
+        ),
+        new Task(
+          this,
+          (num: number) => this.score(num),
+          (id: string) => this.removeEnemy(id),
+          { bottom: 183, left: 580, moveDirection: 'left' },
+          7100,
+        ),
+      ],
+      '-2400': [
+        new Bug(
+          this,
+          (num: number) => this.score(num),
+          (id: string) => this.removeEnemy(id),
+          { jumpDirection: 'down', left: 900 },
+        ),
+        new Bug(
+          this,
+          (num: number) => this.score(num),
+          (id: string) => this.removeEnemy(id),
+          { jumpDirection: 'down', left: 800 },
+        ),
+        new Bug(
+          this,
+          (num: number) => this.score(num),
+          (id: string) => this.removeEnemy(id),
+          { jumpDirection: 'down', left: 320 },
+        ),
+        new Task(
+          this,
+          (num: number) => this.score(num),
+          (id: string) => this.removeEnemy(id),
+          {
+            bottom: 183,
+            jumpDirection: 'down',
+            left: 700,
+          },
+        ),
+        new Task(
+          this,
+          (num: number) => this.score(num),
+          (id: string) => this.removeEnemy(id),
+          {
+            bottom: 353,
+            jumpDirection: 'down',
+            left: 700,
+            moveDirection: 'right',
+          },
+        ),
+      ],
+      '-1200': [
+        new Bug(
+          this,
+          (num: number) => this.score(num),
+          (id: string) => this.removeEnemy(id),
+          { jumpDirection: 'down', left: 640 },
+        ),
+        new Bug(
+          this,
+          (num: number) => this.score(num),
+          (id: string) => this.removeEnemy(id),
+          {
+            jumpDirection: 'down',
+            left: 680,
+            moveDirection: 'right',
+          },
+        ),
+        new Bug(
+          this,
+          (num: number) => this.score(num),
+          (id: string) => this.removeEnemy(id),
+          {
+            bottom: 600,
+            jumpDirection: 'down',
+            left: 800,
+          },
+          2000,
+        ),
+        new Bug(
+          this,
+          (num: number) => this.score(num),
+          (id: string) => this.removeEnemy(id),
+          { bottom: 600, isJumping: true, jumpDirection: 'up', left: 400 },
+          1000,
+        ),
+        new Task(
+          this,
+          (num: number) => this.score(num),
+          (id: string) => this.removeEnemy(id),
+          {
+            bottom: 183,
+            jumpDirection: 'down',
+            left: 850,
+          },
+        ),
+        new Task(
+          this,
+          (num: number) => this.score(num),
+          (id: string) => this.removeEnemy(id),
+          {
+            left: 300,
+          },
+        ),
+      ],
+      0: [
+        new Bug(
+          this,
+          (num: number) => this.score(num),
+          (id: string) => this.removeEnemy(id),
+        ),
+        new Bug(
+          this,
+          (num: number) => this.score(num),
+          (id: string) => this.removeEnemy(id),
+          {},
+          1000,
+        ),
+        new Task(
+          this,
+          (num: number) => this.score(num),
+          (id: string) => this.removeEnemy(id),
+          {},
+          2500,
+        ),
+        new Bug(
+          this,
+          (num: number) => this.score(num),
+          (id: string) => this.removeEnemy(id),
+          {},
+          4000,
+        ),
+      ],
     };
   }
 
@@ -443,27 +491,49 @@ export class Level1 extends BaseScene {
     const section = this.create();
     section.classList.add('level1');
 
-    // section.innerHTML = `
-    //   <div class="game-body">
-    //     <div class="instruction">
-    //       <div class="instruction-block">
-    //         <h2>Уровень 1</h2>
-    //         <p>На пути Коржа к релизу ему будут попадаться баги и фичи, с которыми он должен расправиться с помощью МР.</p>
-    //         <div class="desc">
-    //           <div>
-    //             <img src="korzh.png" alt="Korzh" />
-    //             Корж
-    //           </div>
-    //         </div>
-    //       </div>
-    //     </div>
-    //   </div>
-    // `;
-    section.innerHTML = `<div class="game-body"><div class="enemies"></div></div>`;
+    section.innerHTML = `
+      <div class="dialog-container"><dialog class="nes-dialog is-rounded" id="dialog-rounded" open="">
+        <form method="dialog" id="level-1-inst">
+          <div class="instruction">
+            <div class="instruction-block">
+              <h2>Уровень 1</h2>
+              <p>На пути Коржа к релизу ему будут попадаться баги и фичи (и опасные боссы), с которыми он должен расправиться с помощью МР.</p>
+              <p>По мере роста очков тревожности будут открываться новые абилки.</p>
+              <p>Управление: стрелки, МР - пробел</p>
+            </div>
+          </div>
+          <menu class="dialog-menu">
+            <button class="nes-btn is-primary">Ясно-понятно</button>
+          </menu>
+        </form>
+      </dialog></div>
+    `;
 
+    const handleEnter = (e: KeyboardEvent) => {
+      if (e.key === 'Enter' && document.querySelector('#level-1-inst')) {
+        document.body.removeEventListener('keyup', handleEnter);
+        section.innerHTML = `<div class="game-body"><div class="enemies"></div></div>`;
+
+        this.startLevel();
+        this.drawObstacles();
+        this.drawEnemies();
+
+        const audio = document.querySelector('#main-audio') as HTMLAudioElement;
+        if (audio) {
+          audio.play();
+          audio.volume = 0.2;
+        }
+      }
+    };
     document.body.querySelector('#main')!.appendChild(section);
-    this.drawObstacles();
-    this.drawEnemies();
+
+    document.body.addEventListener('keyup', handleEnter);
+    document.body
+      .querySelector('#level-1-inst')
+      ?.addEventListener('submit', (e) => {
+        e.preventDefault();
+        handleEnter({ key: 'Enter' } as KeyboardEvent);
+      });
   }
 
   private drawObstacles() {
@@ -479,9 +549,14 @@ export class Level1 extends BaseScene {
     const enemies = document.querySelector('.enemies');
     if (!enemies || !this.enemies[this.bgOffset]) return;
 
-    this.enemies[this.bgOffset].forEach((item) =>
-      item.init(enemies as HTMLDivElement),
-    );
+    this.enemies[this.bgOffset].forEach((item) => {
+      if (
+        !(item instanceof Boss) ||
+        (item instanceof Boss && !this.bossesShown.includes(item.type))
+      ) {
+        item.init(enemies as HTMLDivElement);
+      }
+    });
   }
 
   private setStyles() {
@@ -499,7 +574,9 @@ export class Level1 extends BaseScene {
       const node = document.querySelector(
         `#enemy-${enemy.getId()}`,
       ) as HTMLDivElement;
-      node.style.display = 'none';
+      if (node) {
+        node.style.display = 'none';
+      }
     });
   }
 
@@ -508,6 +585,8 @@ export class Level1 extends BaseScene {
     bottom?: number,
     isMoving?: boolean,
   ) {
+    if (this.isBossIntro) return false;
+
     const offset = this.bgOffset;
     if (direction === 'prev') {
       if (this.bgOffset !== 0) {
@@ -548,10 +627,31 @@ export class Level1 extends BaseScene {
   public onTick() {
     if (!this.enemies[this.bgOffset]) return;
     this.enemies[this.bgOffset].forEach((enemy) => {
-      if (enemy.state === 'active') {
-        enemy.setLeft();
-        enemy.setStyles();
+      const isBoss = enemy instanceof Boss;
+      if (!isBoss) {
+        if (enemy.state === 'active') {
+          enemy.setLeft();
+          enemy.setStyles();
+        }
       }
+    });
+  }
+
+  public checkBossIntro() {
+    return this.isBossIntro;
+  }
+
+  public addEnemies(newEnemies: Enemy[]) {
+    if (!this.enemies[this.bgOffset]) {
+      this.enemies[this.bgOffset] = [];
+    }
+    this.enemies[this.bgOffset].push(...newEnemies);
+
+    const enemies = document.querySelector('.enemies');
+    if (!enemies) return;
+
+    newEnemies.forEach((item) => {
+      item.init(enemies as HTMLDivElement);
     });
   }
 }

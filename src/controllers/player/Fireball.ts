@@ -1,7 +1,8 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+import { Enemy } from '@/base/Enemy';
 import { Movement } from '@/base/Movement';
 import { getObstacleCoords } from '@/base/utils';
 import { POSITION_CONFIG } from '@/base/utils';
+import { Boss } from '@/controllers/enemies/Boss';
 import { ILevel } from '@/types';
 
 export class Fireball extends Movement {
@@ -65,6 +66,7 @@ export class Fireball extends Movement {
 
     const enemies = this.level?.getEnemies?.() ?? [];
     const enemy = enemies.find((enemy) => {
+      if (enemy instanceof Boss) return false;
       if (enemy.state === 'destroyed' || enemy.state === 'pending')
         return false;
 
@@ -77,7 +79,7 @@ export class Fireball extends Movement {
       const curTop = this.bottom + 30;
       const topIntersection =
         (curTop >= enemyTopLeft[1] && this.bottom <= enemyTopLeft[1]) ||
-        (curTop <= enemyTopLeft[1] && this.bottom >= enemyTopLeft[1]) ||
+        (curTop <= enemyTopLeft[1] && this.bottom >= enemyBottomRight[1]) ||
         (curTop >= enemyBottomRight[1] && this.bottom <= enemyBottomRight[1]);
 
       return (
@@ -87,14 +89,16 @@ export class Fireball extends Movement {
       );
     });
     if (obstacle || enemy) {
-      this.left = obstacle ? obstacle.getParams().x - 30 : enemy!.left - 30;
+      this.left = obstacle
+        ? obstacle.getParams().x - 30
+        : (enemy as Enemy)!.left - 30;
       this.node?.classList.add('boom');
       this.destroyed = true;
       setTimeout(() => {
         this.destroy();
       }, 200);
 
-      if (enemy) enemy.hit();
+      if (enemy) (enemy as Enemy).hit();
     }
   }
 

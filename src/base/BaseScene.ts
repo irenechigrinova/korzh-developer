@@ -16,12 +16,12 @@ export class BaseScene {
   init(args?: unknown) {}
   create() {
     const section = document.createElement('section');
-    section.id = this.getId();
+    section.id = `level-${this.getId()}`;
     this.node = section;
     return section;
   }
   destroy() {
-    document.querySelector(`#${this.id}`)?.remove();
+    document.querySelector(`#level-${this.id}`)?.remove();
   }
 
   getId() {

@@ -2,6 +2,7 @@ import { Movement } from '@/base/Movement';
 import { POSITION_CONFIG } from '@/base/utils';
 
 import '../../styles/player.style.scss';
+import { Boss } from '@/controllers/enemies/Boss';
 import { Fireball } from '@/controllers/player/Fireball';
 import { ILevel } from '@/types';
 
@@ -15,6 +16,7 @@ export class Player extends Movement {
   private watch: boolean;
 
   private downgrade: () => void;
+  private onDie: () => void;
 
   private levelChanging: boolean;
 
@@ -25,6 +27,12 @@ export class Player extends Movement {
     document.removeEventListener('keydown', this.handleKeyboardDown);
     document.removeEventListener('keyup', this.handleKeyboardUp);
     this.watch = false;
+    this.fireballs.forEach((item) => {
+      item.destroy();
+      item.node?.remove();
+    });
+    this.fireballs = [];
+    this.onDie();
   }
 
   constructor(
@@ -32,6 +40,7 @@ export class Player extends Movement {
     getMyLevel: () => 'middle' | 'senior',
     score: (num: number) => void,
     downgrade: () => void,
+    onDie: () => void,
   ) {
     super(
       level,
@@ -55,6 +64,7 @@ export class Player extends Movement {
     this.watch = true;
     this.downgrade = downgrade;
     this.levelChanging = false;
+    this.onDie = onDie;
   }
 
   private setStyles() {
@@ -171,7 +181,8 @@ export class Player extends Movement {
     const enemies = this.level.getEnemies?.() ?? [];
     for (let i = 0; i < enemies.length; i += 1) {
       const enemy = enemies[i];
-      if (enemy.state === 'destroyed') continue;
+      if (enemy instanceof Boss) continue;
+      if (enemy.state === 'destroyed' || enemy.state === 'pending') continue;
 
       const { top } = POSITION_CONFIG.player;
       const [playerTopLeft, playerTopRight] = top(this.left, this.bottom);
@@ -182,7 +193,7 @@ export class Player extends Movement {
           playerTopLeft[0] >= enemy.left) ||
         (playerTopLeft[0] <= enemy.left + enemy.width &&
           playerTopRight[0] >= enemy.left + enemy.width);
-      const conditionVertical = enemy.bottom + enemy.height >= this.bottom;
+      const conditionVertical = Math.abs(enemy.bottom - this.bottom) <= 10;
       if (conditionHorizontal && conditionVertical) {
         if (this.getMyLevel() === 'middle') {
           this.die();

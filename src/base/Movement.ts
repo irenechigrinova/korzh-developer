@@ -1,7 +1,8 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { BaseScene } from '@/base/BaseScene';
+import { Enemy } from '@/base/Enemy';
 import { Obstacle } from '@/base/Obstacle';
 import { POSITION_CONFIG, getObstacleCoords } from '@/base/utils';
+import { Boss } from '@/controllers/enemies/Boss';
 import { ILevel, TMovementParams, TMovementType, TObstacleType } from '@/types';
 
 export class Movement extends BaseScene {
@@ -154,12 +155,16 @@ export class Movement extends BaseScene {
           progress === 'progress' ||
           (progress === 'end' && this.moveDirection === 'left')
         ) {
-          this.level.changeScene?.('prev');
+          const canChange = this.level.changeScene?.('prev');
+          if (!canChange) {
+            this.left = 0;
+            return;
+          }
         }
         if (progress === 'start') {
           this.left = 0;
         } else {
-          this.left = 1150;
+          this.left = 1140;
         }
       } else {
         this.moveDirection = 'right';
@@ -178,8 +183,6 @@ export class Movement extends BaseScene {
           this.left,
           this.bottom,
         );
-        // const bottom =
-        //   this.type === 'player' ? this.bottom : Math.abs(this.bottom);
         const yIntersection = this.bottom === params.y + params.height - 2;
 
         return yIntersection && xIntersection;
@@ -226,11 +229,6 @@ export class Movement extends BaseScene {
           : bottomLeft[0] >= itemPosition[0][0] &&
               bottomRight[0] <= itemPosition[1][0];
       }
-
-      const minus =
-        this.type === 'task' && this.bottom !== this.initialBottomBaseline
-          ? 200
-          : 0;
 
       const condition =
         this.moveDirection === 'right'
@@ -320,13 +318,9 @@ export class Movement extends BaseScene {
       let breakpoint = 0;
       if (intersected) {
         const params = intersected.getParams();
-        breakpoint = params.y + params.height;
+        breakpoint = params.y + params.height - 2;
       }
-      if (
-        // (this.type === 'player' && bottom < breakpoint) ||
-        // (this.isEnemy && Math.abs(bottom) <= breakpoint + 5)
-        bottom <= breakpoint
-      ) {
+      if (bottom <= breakpoint) {
         direction = 'up';
         bottom = breakpoint;
         jumping = false;
@@ -344,6 +338,7 @@ export class Movement extends BaseScene {
     const { y } = intersected.getParams();
     const enemies = this.level?.getEnemies?.() ?? [];
     const enemy = enemies.find((item) => {
+      if (item instanceof Boss) return false;
       const xIntersection = this.getXIntersection(
         intersected,
         item.left,
@@ -353,7 +348,7 @@ export class Movement extends BaseScene {
       return xIntersection && yIntersection;
     });
     if (enemy) {
-      enemy.destroy();
+      (enemy as Enemy).destroy();
     }
   }
 }

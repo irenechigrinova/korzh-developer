@@ -1,5 +1,6 @@
 import { BaseScene } from '@/base/BaseScene';
 import { Enemy } from '@/base/Enemy';
+import { Boss } from '@/controllers/enemies/Boss';
 import { Obstacle } from '@/base/Obstacle';
 import { POSITION_CONFIG } from '@/base/utils';
 
@@ -27,12 +28,20 @@ export type TObstacle = {
 };
 
 export interface ILevel extends BaseScene {
-  changeScene?: (dir: 'next' | 'prev', bottom?: number, isMoving?: boolean) => boolean;
+  changeScene?: (
+    dir: 'next' | 'prev',
+    bottom?: number,
+    isMoving?: boolean,
+  ) => boolean;
   getProgress?: () => 'progress' | 'start' | 'end';
   getObstacles?: () => Obstacle[];
   onTick?: () => void;
-  getEnemies?: () => Enemy[];
+  getEnemies?: () => (Enemy | Boss)[];
   score?: (val: number) => void;
+  checkBossIntro?: () => boolean;
+  name: TLevel;
+  addEnemies?: (enemies: Enemy[]) => void;
+  removeEnemy?: (id: string) => void;
 }
 
 export type TMovementParams = {
@@ -49,3 +58,5 @@ export type TMovementParams = {
 export type TCoords = [number, number];
 
 export type TMovementType = keyof typeof POSITION_CONFIG;
+
+export type TBoss = 'petya';

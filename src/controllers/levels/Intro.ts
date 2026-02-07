@@ -4,11 +4,14 @@ import { SplitText } from 'gsap/all';
 import { BaseScene } from '@/base/BaseScene';
 
 import '../../styles/intro.style.scss';
+import { TLevel } from '@/types';
 
 export class Intro extends BaseScene {
   private loaded: boolean;
   private parentDestroy: () => void;
   private hasSeenOnce: boolean;
+
+  name: TLevel;
 
   constructor(nextLevel: () => void) {
     super(nextLevel);
@@ -16,6 +19,7 @@ export class Intro extends BaseScene {
     this.loaded = false;
     this.parentDestroy = super.destroy;
     this.hasSeenOnce = !!localStorage.getItem('seenIntro');
+    this.name = 'intro';
   }
 
   private splitTextShowOptions = {
@@ -111,7 +115,8 @@ export class Intro extends BaseScene {
     });
   }
 
-  private handleKeyDown(e: KeyboardEvent) {
+  private handleEnter(e: KeyboardEvent) {
+    console.log('QQQQQQQQQQ');
     if (e.code === 'Enter' && this.hasSeenOnce) {
       this.nextLevel();
     } else {
@@ -121,13 +126,11 @@ export class Intro extends BaseScene {
     }
   }
 
-  private handleKeyboard() {
-    document.addEventListener('keydown', this.handleKeyDown.bind(this));
-  }
+  private enter = this.handleEnter.bind(this);
 
   public destroy(): void {
     gsap.globalTimeline.clear();
-    document.removeEventListener('keydown', this.handleKeyDown.bind(this));
+    document.body.removeEventListener('keyup', this.enter);
     this.parentDestroy();
   }
 
@@ -158,6 +161,6 @@ export class Intro extends BaseScene {
 
     document.body.querySelector('#main')!.appendChild(section);
     this.handleAnimation();
-    this.handleKeyboard();
+    document.body.addEventListener('keyup', this.enter);
   }
 }

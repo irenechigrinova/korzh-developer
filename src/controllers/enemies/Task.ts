@@ -18,7 +18,7 @@ export class Task extends Enemy {
         left: params?.left ?? 1200,
         moveDirection: 'left',
         speed: 1.5,
-        width: 50,
+        width: 76,
       },
       2,
       200,

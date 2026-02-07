@@ -151,7 +151,7 @@ export class Obstacle {
       this.state === 'destroyed' ? 'destroyed-fixed' : 'active',
     );
     this.node.classList.add(
-      ['a', 'b', 'c', 'd', 'e'][Math.floor(Math.random() * 4)],
+      ['a', 'b', 'c', 'd', 'e'][Math.floor(Math.random() * 5)],
     );
     this.node.style.transform = `translate(${this.params.x}px, ${-this.params.y}px)`;
     this.node.style.width = `${this.params.width}px`;

@@ -14,11 +14,11 @@ export class Bug extends Enemy {
       'bug',
       {
         bottom: params?.bottom ?? 0,
-        height: 50,
+        height: 45,
         left: params?.left ?? 1200,
         moveDirection: params?.moveDirection ?? 'left',
         speed: 2,
-        width: 50,
+        width: 65,
       },
       1,
       100,
