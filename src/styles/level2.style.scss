@@ -1,0 +1,249 @@
+.level2 {
+  background-color: #1B1212;
+  color: #fff;
+
+  .game-body {
+    background-color: #fff;
+    width: 1200px;
+    height: 600px;
+    margin: auto;
+    position: relative;
+    top: calc((100vh / 2) - 300px);
+    background-image: url("./level2/level2.png");
+    background-size: cover;
+    background-repeat: no-repeat;
+    position: relative;
+    overflow: hidden;
+  }
+}
+
+.question {
+  background-image: url("./level1/question-sprite.png");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: 0 0;
+  bottom: 80px;
+
+  &::after {
+    display: none;
+  }
+
+  &.active {
+    animation: active-question 800ms linear infinite;
+  }
+
+  &.destroyed,
+  &.destroyed-fixed {
+    bottom: 80px;
+    background-image: url("./level1/destroyed-question.png");
+    background-position: 0 0;
+    animation: destroyed-question 250ms ease-in forwards;
+
+    &::after {
+      display: block;
+      animation: coin 400ms linear infinite, coin-show 1200ms ease-in forwards;
+    }
+  }
+
+  &.destroyed-fixed {
+    animation: none;
+
+    &::after {
+      animation: none;
+      display: none;
+    }
+  }
+
+  &.a::after {
+    content: "Как так-то блять";
+    width: 100px;
+    left: -28px;
+  }
+
+  &.b::after {
+    content: "Ой-вей";
+    width: 65px;
+    left: -10px;
+  }
+
+  &.c::after {
+    content: "Не понимаю, о чем ты";
+    width: 120px;
+    left: -38px;
+  }
+
+  &.d::after {
+    content: "Феерическая хуета";
+    left: -33px;
+  }
+
+  &.e::after {
+    content: "Пиздец";
+    left: -6px;
+  }
+
+  &::after {
+    background-repeat: no-repeat;
+    background-position: 0 0;
+    position: absolute;
+    top: -45px;
+    left: -17px;
+    font-size: 10px;
+    text-align: center;
+  }
+}
+
+.tube-small,
+.tube-mid,
+.tube-large,
+.void {
+  bottom: 80px;
+}
+
+.brick-transparent {
+  bottom: 80px;
+}
+
+.brick {
+  background-image: url("./level1/brick.png");
+  background-size: cover;
+  background-repeat: no-repeat;
+  bottom: 80px;
+
+  div {
+    background-size: contain;
+    background-repeat: no-repeat;
+    position: relative;
+  }
+
+  &.active {
+    div {
+      display: none;
+    }
+  }
+
+  &.toggled {
+    div {
+      display: none;
+    }
+    bottom: 80px;
+    animation: destroyed-question 250ms ease-in forwards;
+  }
+
+  &.destroyed,
+  &.destroyed-fixed {
+    background-image: none;
+    div {
+      display: block;
+    }
+  }
+
+  &.destroyed-fixed {
+    div {
+      display: none;
+    }
+  }
+
+  div:nth-child(1) {
+    background-image: url("./level1/brick-1.png");
+    width: 30px;
+    height: 30px;
+    transform: translate(0, 0) scale(1);
+    animation: brick-1 50ms ease-out forwards;
+    animation-delay: 10ms;
+  }
+  div:nth-child(2) {
+    background-image: url("./level1/brick-2.png");
+    width: 30px;
+    height: 30px;
+    top: -7px;
+    transform: translate(0, 0) scale(1);
+    animation: brick-2 50ms ease-out forwards;
+    animation-delay: 10ms;
+  }
+  div:nth-child(3) {
+    background-image: url("./level1/brick-3.png");
+    width: 24px;
+    height: 30px;
+    left: 21px;
+    top: -60px;
+    transform: translate(0, 0) scale(1);
+    animation: brick-3 50ms ease-out forwards;
+    animation-delay: 10ms;
+  }
+  div:nth-child(4) {
+    background-image: url("./level1/brick-4.png");
+    width: 24px;
+    height: 30px;
+    left: 22px;
+    top: -75px;
+    transform: translate(0, 0) scale(1);
+    animation: brick-4 50ms ease-out forwards;
+    animation-delay: 10ms;
+  }
+}
+
+@keyframes brick-1 {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  100% {
+    transform: translate(-20px, -20px) scale(0.5);
+  }
+}
+
+@keyframes brick-2 {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  100% {
+    transform: translate(-20px, 20px) scale(0.5);
+  }
+}
+
+@keyframes brick-3 {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  100% {
+    transform: translate(20px, -20px) scale(0.5);
+  }
+}
+
+@keyframes brick-4 {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  100% {
+    transform: translate(20px, 25px) scale(0.5);
+  }
+}
+
+@keyframes active-question {
+  0%, 50% { background-position: 0 0; }
+  50.01%, 75% { background-position: -45px 0; }
+  75.01%, 100% { background-position: -90px 0; }
+}
+
+@keyframes destroyed-question {
+  0% {
+    bottom: 80px;
+  }
+  50% {
+    bottom: 100px;
+  }
+  100% {
+    bottom: 80px;
+  }
+}
+
+@keyframes coin-show {
+  0% {
+    transform: translateY(20px);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-45px);
+    opacity: 0;
+  }
+}

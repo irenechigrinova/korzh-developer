@@ -1,7 +1,7 @@
 import { Enemy } from '@/base/Enemy';
+import { Level } from '@/base/Level';
 import { Boss } from '@/controllers/enemies/Boss';
 import { Bug } from '@/controllers/enemies/Bug';
-import { ILevel } from '@/types';
 
 export class CallLead {
   private leads: {
@@ -15,12 +15,12 @@ export class CallLead {
   private interval: number;
   private node: HTMLDivElement | null;
   private onFatality: (isOn: boolean) => void;
-  private level: ILevel;
+  private level: Level;
   private state: 'idle' | 'active' | 'pending';
   private timeout: number;
   private hasBeenShown: boolean;
 
-  constructor(level: ILevel, onFatality: (isOn: boolean) => void) {
+  constructor(level: Level, onFatality: (isOn: boolean) => void) {
     this.leads = [
       {
         fatality: 'Богданити',
@@ -138,42 +138,28 @@ export class CallLead {
         if (lead.name === 'igor') {
           const rand = () => Math.random() * (800 - 200) + 200;
           this.level.addEnemies?.([
-            new Bug(
-              this.level,
-              (num: number) => this.level.score?.(num),
-              (id: string) => this.level.removeEnemy?.(id),
-              {
-                bottom: 600,
-                isJumping: true,
-                jumpDirection: 'up',
-                left: rand(),
-              },
-            ),
-            new Bug(
-              this.level,
-              (num: number) => this.level.score?.(num),
-              (id: string) => this.level.removeEnemy?.(id),
-              {
-                bottom: 600,
-                isJumping: true,
-                jumpDirection: 'up',
-                left: rand(),
-              },
-            ),
-            new Bug(
-              this.level,
-              (num: number) => this.level.score?.(num),
-              (id: string) => this.level.removeEnemy?.(id),
-              {
-                bottom: 600,
-                isJumping: true,
-                jumpDirection: 'up',
-                left: rand(),
-              },
-            ),
+            new Bug(this.level, {
+              bottom: 600,
+              isJumping: true,
+              jumpDirection: 'up',
+              left: rand(),
+            }),
+            new Bug(this.level, {
+              bottom: 600,
+              isJumping: true,
+              jumpDirection: 'up',
+              left: rand(),
+            }),
+            new Bug(this.level, {
+              bottom: 600,
+              isJumping: true,
+              jumpDirection: 'up',
+              left: rand(),
+            }),
           ]);
         }
       },
+
       lead.name === 'igor' ? 1500 : 3000,
     );
 
@@ -243,7 +229,7 @@ export class CallLead {
       </dialog>
     `;
       const handleEnter = (e: KeyboardEvent) => {
-        if (e.key === 'Enter') {
+        if (e.code === 'Enter' || e.code === 'NumpadEnter') {
           document.body.querySelector('.dialog-container')!.remove();
           document.body.removeEventListener('keyup', handleEnter);
           this.onFatality(false);
@@ -254,7 +240,7 @@ export class CallLead {
       document.body.addEventListener('keyup', handleEnter);
       document.body.querySelector('form')?.addEventListener('submit', (e) => {
         e.preventDefault();
-        handleEnter({ key: 'Enter' } as KeyboardEvent);
+        handleEnter({ code: 'Enter' } as KeyboardEvent);
       });
     } else {
       start();

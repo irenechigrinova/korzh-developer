@@ -14,7 +14,7 @@ export class AgeCheck extends BaseScene {
 
   private handleSubmit() {
     const handleEnter = (e: KeyboardEvent) => {
-      if (e.code === 'Enter' && document.querySelector('#age-check')) {
+      if ((e.code === 'Enter' || e.code === 'NumpadEnter') && document.querySelector('#age-check')) {
         localStorage.setItem('skip18', 'true');
         this.nextLevel();
         document.body.removeEventListener('keyup', handleEnter);

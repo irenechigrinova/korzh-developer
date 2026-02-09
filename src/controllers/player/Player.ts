@@ -1,10 +1,10 @@
+import { Level } from '@/base/Level';
 import { Movement } from '@/base/Movement';
-import { POSITION_CONFIG } from '@/base/utils';
 
 import '../../styles/player.style.scss';
+import { POSITION_CONFIG } from '@/base/utils';
 import { Boss } from '@/controllers/enemies/Boss';
 import { Fireball } from '@/controllers/player/Fireball';
-import { ILevel } from '@/types';
 
 export class Player extends Movement {
   private playerNode: null | HTMLDivElement;
@@ -36,7 +36,7 @@ export class Player extends Movement {
   }
 
   constructor(
-    level: ILevel,
+    level: Level,
     getMyLevel: () => 'middle' | 'senior',
     score: (num: number) => void,
     downgrade: () => void,
@@ -148,7 +148,7 @@ export class Player extends Movement {
 
     this.setLeft();
 
-    if (this.left > 845 && this.left <= 1050) {
+    if (this.left > 920 && this.left <= 1050) {
       const progress = this.level.getProgress?.();
       if (progress === 'end') {
         document.removeEventListener('keydown', this.handleKeyboardDown);

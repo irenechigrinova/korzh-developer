@@ -1,14 +1,9 @@
 import { Enemy } from '@/base/Enemy';
-import { ILevel, TMovementParams } from '@/types';
+import { Level } from '@/base/Level';
+import { TMovementParams } from '@/types';
 
 export class Task extends Enemy {
-  constructor(
-    level: ILevel,
-    score: (num: number) => void,
-    destroy: (id: string) => void,
-    params?: Partial<TMovementParams>,
-    delay = 0,
-  ) {
+  constructor(level: Level, params?: Partial<TMovementParams>, delay = 0) {
     super(
       level,
       'task',
@@ -23,8 +18,6 @@ export class Task extends Enemy {
       2,
       200,
       delay,
-      score,
-      destroy,
     );
   }
 }

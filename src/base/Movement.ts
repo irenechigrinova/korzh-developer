@@ -1,9 +1,10 @@
 import { BaseScene } from '@/base/BaseScene';
 import { Enemy } from '@/base/Enemy';
+import { Level } from '@/base/Level';
 import { Obstacle } from '@/base/Obstacle';
 import { POSITION_CONFIG, getObstacleCoords } from '@/base/utils';
 import { Boss } from '@/controllers/enemies/Boss';
-import { ILevel, TMovementParams, TMovementType, TObstacleType } from '@/types';
+import { TMovementParams, TMovementType } from '@/types';
 
 export class Movement extends BaseScene {
   isMoving: boolean;
@@ -15,7 +16,7 @@ export class Movement extends BaseScene {
   bottom: number;
   jumpDirection: 'up' | 'down';
 
-  level: ILevel;
+  level: Level;
   score: (value: number) => void;
 
   width: number;
@@ -29,7 +30,7 @@ export class Movement extends BaseScene {
   private isEnemy: boolean;
 
   constructor(
-    level: ILevel,
+    level: Level,
     score: (value: number) => void,
     type: TMovementType,
     params: TMovementParams,
@@ -304,7 +305,7 @@ export class Movement extends BaseScene {
       if (bottom > breakpoint) {
         direction = 'down';
         intersected?.destroy?.(myLevel, this.score);
-        if (intersected?.getState() === 'destroyed') {
+        if (intersected?.getState() === 'destroyed' && myLevel === 'senior') {
           this.checkEnemies(intersected);
         }
       }

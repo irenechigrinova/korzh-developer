@@ -1,16 +1,18 @@
 import { v4 as uuidv4 } from 'uuid';
 
+import { Level } from '@/base/Level';
+import { Task } from '@/controllers/enemies/Task';
 import { TBoss } from '@/types';
 
 export class Boss {
+  level: Level;
   type: TBoss;
-  onStart: () => void;
   private id: string;
 
-  constructor(type: TBoss, onStart: () => void) {
+  constructor(level: Level, type: TBoss) {
     this.type = type;
-    this.onStart = onStart;
     this.id = this.id = uuidv4();
+    this.level = level;
   }
 
   renderPetya() {
@@ -21,10 +23,23 @@ export class Boss {
       <div class="tear"></div>
     `;
     document.querySelector('.game-body')!.appendChild(div);
-    setTimeout(() => this.onStart(), 2000);
+    setTimeout(() => this.level.onShowBoss('petya'), 2000);
     setTimeout(() => {
       div.remove();
     }, 10000);
+    this.level.addEnemies([
+      new Task(this.level, { left: 560 }, 7300),
+      new Task(
+        this.level,
+        { bottom: 0, left: 560, moveDirection: 'left' },
+        7600,
+      ),
+      new Task(
+        this.level,
+        { bottom: 183, left: 580, moveDirection: 'left' },
+        7100,
+      ),
+    ]);
   }
 
   getId() {

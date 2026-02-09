@@ -1,3 +1,4 @@
+import { Level as LevelBase } from '@/base/Level';
 import { CallLead } from '@/controllers/abilities/CallLead';
 import { AgeCheck } from '@/controllers/levels/AgeCheck';
 import { Intro } from '@/controllers/levels/Intro';
@@ -12,7 +13,7 @@ export class GameController {
   private state: {
     levelIdx: number;
     levels: TLevel[];
-    curLevel: null | ILevel;
+    curLevel: null | LevelBase;
     score: number;
     playerLevel: 'middle' | 'senior';
     paused: boolean;
@@ -57,7 +58,7 @@ export class GameController {
       this.player.updateLevel();
       if (!this.callLeadAbility) {
         this.callLeadAbility = new CallLead(
-          this.state.curLevel as ILevel,
+          this.state.curLevel as LevelBase,
           (isOn: boolean) => this.handleFatality(isOn),
         );
       }
@@ -105,22 +106,24 @@ export class GameController {
         <form method="dialog" id="you-are-dead">
           ${this.renderDieItem()}
           <menu class="dialog-menu">
-            <button class="nes-btn is-primary">Заново</button>
+            <button class="nes-btn is-primary" type="submit">Заново</button>
           </menu>
         </form>
       </dialog>
     `;
     const handleEnter = (e: KeyboardEvent) => {
-      if (e.key === 'Enter') {
+      if (e.code === 'Enter' || e.code === 'NumpadEnter') {
         this.state.paused = false;
         this.state.score = 0;
         this.state.playerLevel = 'middle';
         this.renderScore();
         document.body.querySelector('.dialog-container')!.remove();
         document.body.removeEventListener('keyup', handleEnter);
+        this.player?.destroy();
+        this.callLeadAbility?.destroy();
         this.state.curLevel?.restart?.();
         this.player = new Player(
-          this.state.curLevel as ILevel,
+          this.state.curLevel as LevelBase,
           () => this.getPlayerLevel(),
           (num: number) => this.setScore(num),
           () => {
@@ -140,7 +143,7 @@ export class GameController {
       .querySelector('#you-are-dead')
       ?.addEventListener('submit', (e) => {
         e.preventDefault();
-        handleEnter({ key: 'Enter' } as KeyboardEvent);
+        handleEnter({ code: 'Enter' } as KeyboardEvent);
       });
   }
 
@@ -155,7 +158,7 @@ export class GameController {
     const start = () => {
       if (name === '1') {
         this.player = new Player(
-          Level,
+          Level as LevelBase,
           () => this.getPlayerLevel(),
           (num: number) => this.setScore(num),
           () => {
@@ -183,13 +186,13 @@ export class GameController {
     };
 
     this.state.curLevel?.destroy();
-    const Level: ILevel = new Component(
+    const Level = new Component(
       () => this.nextLevel(),
       (num: number) => this.setScore(num),
       () => this.handleChangeScene(),
       start,
     );
-    this.state.curLevel = Level;
+    this.state.curLevel = Level as LevelBase;
     Level.init();
   }
 

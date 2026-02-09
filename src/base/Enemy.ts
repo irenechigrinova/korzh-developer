@@ -1,29 +1,26 @@
+import { Level } from '@/base/Level';
 import { Movement } from '@/base/Movement';
-import { ILevel, TMovementParams, TMovementType } from '@/types';
+import { TMovementParams, TMovementType } from '@/types';
 
 export class Enemy extends Movement {
-  level: ILevel;
+  level: Level;
   node: HTMLDivElement | null;
   state: 'active' | 'pending' | 'destroyed';
   delay: number;
   weight: number;
   lives: number;
-  score: (num: number) => void;
-  destroyInLevel: (id: string) => void;
 
   constructor(
-    level: ILevel,
+    level: Level,
     type: TMovementType,
     params: TMovementParams,
     lives: number,
     weight: number,
     delay: number,
-    score: (num: number) => void,
-    destroy: (id: string) => void,
   ) {
     super(
       level,
-      () => undefined,
+      (num: number) => level.score(num),
       type,
       params,
       () => this.die(),
@@ -35,8 +32,6 @@ export class Enemy extends Movement {
     this.delay = delay;
     this.weight = weight;
     this.lives = lives;
-    this.score = score;
-    this.destroyInLevel = destroy;
   }
 
   setStyles() {
@@ -73,7 +68,7 @@ export class Enemy extends Movement {
     this.node.classList.add('die');
     setTimeout(() => {
       this.node!.remove();
-      this.destroyInLevel(this.getId());
+      this.level.removeEnemy?.(this.getId());
     }, 1000);
   }
 
@@ -85,7 +80,7 @@ export class Enemy extends Movement {
     this.score(this.weight);
     setTimeout(() => {
       this.node!.remove();
-      this.destroyInLevel(this.getId());
+      this.level.removeEnemy?.(this.getId());
     }, 1000);
   }
 

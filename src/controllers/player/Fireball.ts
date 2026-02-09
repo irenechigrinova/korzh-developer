@@ -1,16 +1,16 @@
 import { Enemy } from '@/base/Enemy';
+import { Level } from '@/base/Level';
 import { Movement } from '@/base/Movement';
 import { getObstacleCoords } from '@/base/utils';
 import { POSITION_CONFIG } from '@/base/utils';
 import { Boss } from '@/controllers/enemies/Boss';
-import { ILevel } from '@/types';
 
 export class Fireball extends Movement {
   node: HTMLDivElement | null;
   destroyed: boolean;
 
   constructor(
-    level: ILevel,
+    level: Level,
     getMyLevel: () => 'middle' | 'senior',
     score: (num: number) => void,
     initialLeft: number,
