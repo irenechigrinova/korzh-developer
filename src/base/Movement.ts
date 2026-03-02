@@ -53,7 +53,7 @@ export class Movement extends BaseScene {
     this.height = params.height;
     this.type = type;
     this.dieCallback = die;
-    this.isEnemy = ['bug', 'task'].includes(this.type);
+    this.isEnemy = ['bug', 'task', 'sq'].includes(this.type);
   }
 
   private getXIntersection(
@@ -62,9 +62,12 @@ export class Movement extends BaseScene {
     bottom: number,
   ): boolean {
     const isTaskOnHeight =
-      this.type === 'task' &&
+      (this.type === 'task' || this.type === 'sq') &&
       this.bottomBaseline !== this.initialBottomBaseline;
-    const { top } = POSITION_CONFIG[isTaskOnHeight ? 'taskTop' : this.type];
+    const { top } =
+      POSITION_CONFIG[
+        (isTaskOnHeight ? `${this.type}Top` : this.type) as TMovementType
+      ];
     const [itemTopLeft, itemTopRight] = top(left, bottom);
     const [_, __, obstBottomRight, obstBottomLeft] =
       getObstacleCoords(obstacle);
@@ -87,6 +90,8 @@ export class Movement extends BaseScene {
 
     return obstacles
       .filter((obstacle) => {
+        if (obstacle.getParams().type.includes('client')) return false;
+
         const [obstTopLeft, _, obstBottomRight, obstBottomLeft] =
           getObstacleCoords(obstacle);
 
@@ -113,6 +118,8 @@ export class Movement extends BaseScene {
 
     return obstacles
       .filter((obstacle) => {
+        if (obstacle.getParams().type.includes('client')) return false;
+
         const [obstTopLeft, obstTopRight] = getObstacleCoords(obstacle);
 
         const xIntersection = this.getXIntersection(obstacle, left, bottom);
@@ -134,6 +141,19 @@ export class Movement extends BaseScene {
   }
 
   private checkEndScene() {
+    if (this.type === 'fireball-g' || this.type === 'fireball-b') {
+      if (this.left > 1180 || this.left < -30) {
+        this.dieCallback?.();
+      }
+      return;
+    }
+
+    if (this.type === 'player' && this.level.isBossScene) {
+      if (this.left < 0) this.left = 0;
+
+      return;
+    }
+
     if (this.left > 1150) {
       if (this.type === 'player') {
         const canChange = this.level.changeScene?.(
@@ -178,6 +198,7 @@ export class Movement extends BaseScene {
       const obstacles = this.level.getObstacles?.() ?? [];
       const obstacle = obstacles.find((obstacle) => {
         const params = obstacle.getParams();
+        if (params.type.includes('client')) return false;
 
         const xIntersection = this.getXIntersection(
           obstacle,
@@ -189,7 +210,7 @@ export class Movement extends BaseScene {
         return yIntersection && xIntersection;
       });
       if (!obstacle) {
-        if (this.type === 'task') {
+        if (this.type === 'task' || this.type === 'sq') {
           this.moveDirection =
             this.moveDirection === 'right' ? 'left' : 'right';
         } else {
@@ -247,7 +268,7 @@ export class Movement extends BaseScene {
         );
       }
 
-      return condition;
+      return condition && itemPosition[3][1] <= this.bottom;
     });
 
     if (obstacle) {

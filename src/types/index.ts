@@ -13,7 +13,9 @@ export type TObstacleType =
   | 'tube-mid'
   | 'tube-large'
   | 'void'
-  | 'brick-transparent';
+  | 'brick-transparent'
+  | 'client-green'
+  | 'client-blue';
 
 export type TObstacle = {
   x: number;
@@ -25,6 +27,7 @@ export type TObstacle = {
   active: boolean;
   id: string;
   remove: (id: string) => void;
+  rotate?: number;
 };
 
 export interface ILevel extends BaseScene {
@@ -60,4 +63,4 @@ export type TCoords = [number, number];
 
 export type TMovementType = keyof typeof POSITION_CONFIG;
 
-export type TBoss = 'petya';
+export type TBoss = 'petya' | 'nikolina' | 'ermakov' | 'bogi';

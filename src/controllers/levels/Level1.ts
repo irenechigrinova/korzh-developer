@@ -167,9 +167,13 @@ export class Level1 extends Level {
     score: (num: number) => void,
     onChangeScene: () => void,
     startLevel: () => void,
+    getPlayerPosition: () => Record<string, any>,
+    hitPlayer: () => void,
   ) {
     super({
       bgLast: -7200,
+      getPlayerPosition,
+      hitPlayer,
       name: '1',
       nextLevel,
       onChangeScene,

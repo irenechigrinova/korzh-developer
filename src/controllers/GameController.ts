@@ -40,10 +40,23 @@ export class GameController {
     return this.state.playerLevel;
   }
 
+  private renderTimer() {
+    switch (this.state.curLevel?.name) {
+      default:
+        return null;
+      case '1':
+        return '3 месяца';
+      case '2':
+        return '1 месяц';
+    }
+  }
+
   private renderScore() {
+    const timer = this.renderTimer();
     document.querySelector('.score')!.innerHTML = `
       <div>Тревожное расстройство: ${this.state.score}</div>
       <div>Уровень: ${this.state.playerLevel === 'middle' ? 'Мидл' : 'Сеньор'}</div>
+      ${timer ? `<div class="timer">До релиза: ${timer}</div>` : ''}
     `;
   }
 
@@ -99,6 +112,7 @@ export class GameController {
 
   private playerDead() {
     this.state.paused = true;
+    this.state.curLevel?.destroy();
     const div = document.createElement('div');
     div.className = 'dialog-container';
     div.innerHTML = `
@@ -120,6 +134,7 @@ export class GameController {
         document.body.querySelector('.dialog-container')!.remove();
         document.body.removeEventListener('keyup', handleEnter);
         this.player?.destroy();
+        document.querySelector('#player')?.remove();
         this.callLeadAbility?.destroy();
         this.state.curLevel?.restart?.();
         this.player = new Player(
@@ -156,7 +171,9 @@ export class GameController {
     if (!Component) return;
 
     const start = () => {
-      if (name === '1') {
+      if (['1', '2'].includes(name)) {
+        this.player?.destroy();
+        document.querySelector('#player')?.remove();
         this.player = new Player(
           Level as LevelBase,
           () => this.getPlayerLevel(),
@@ -174,14 +191,18 @@ export class GameController {
       this.player?.init();
 
       if (['1', '2'].includes(name)) {
-        const div = document.createElement('div');
-        div.className = 'score';
-        document.querySelector('main .game-body')?.append(div);
-        this.renderScore();
+        if (!document.querySelector('.score')) {
+          const div = document.createElement('div');
+          div.className = 'score';
+          document.querySelector('main .game-body')?.append(div);
+          this.renderScore();
+        }
 
-        const abilities = document.createElement('div');
-        abilities.className = 'abilities';
-        document.querySelector('main .game-body')?.append(abilities);
+        if (!document.querySelector('abilities')) {
+          const abilities = document.createElement('div');
+          abilities.className = 'abilities';
+          document.querySelector('main .game-body')?.append(abilities);
+        }
       }
     };
 
@@ -191,6 +212,8 @@ export class GameController {
       (num: number) => this.setScore(num),
       () => this.handleChangeScene(),
       start,
+      () => this.player?.getPosition() ?? {},
+      () => this.player?.getDamage(),
     );
     this.state.curLevel = Level as LevelBase;
     Level.init();
@@ -260,8 +283,10 @@ export class GameController {
     `;
     document.querySelector('.body-loading')!.appendChild(div);
 
-    this.state.levelIdx = idx;
-    this.setLevel(this.state.levels[idx]);
+    //this.state.levelIdx = idx;
+    //this.setLevel(this.state.levels[idx]);
+    this.state.levelIdx = 3;
+    this.setLevel(this.state.levels[3]);
     this.handleTick();
   }
 }

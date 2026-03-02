@@ -4,6 +4,8 @@ import { Movement } from '@/base/Movement';
 import { getObstacleCoords } from '@/base/utils';
 import { POSITION_CONFIG } from '@/base/utils';
 import { Boss } from '@/controllers/enemies/Boss';
+import { Deadline } from '@/controllers/enemies/Deadline';
+import { TMovementType } from '@/types';
 
 export class Fireball extends Movement {
   node: HTMLDivElement | null;
@@ -70,7 +72,7 @@ export class Fireball extends Movement {
       if (enemy.state === 'destroyed' || enemy.state === 'pending')
         return false;
 
-      const { top } = POSITION_CONFIG[enemy.type];
+      const { top } = POSITION_CONFIG[enemy.type as TMovementType];
       const [enemyTopLeft, _, enemyBottomRight, enemyBottomLeft] = top(
         enemy.left,
         enemy.bottom,
@@ -83,15 +85,19 @@ export class Fireball extends Movement {
         (curTop >= enemyBottomRight[1] && this.bottom <= enemyBottomRight[1]);
 
       return (
-        this.left + 30 >= enemyBottomLeft[0] &&
-        this.left < enemyBottomLeft[0] &&
+        ((this.left + 30 >= enemyBottomLeft[0] &&
+          this.left < enemyBottomLeft[0]) ||
+          (this.left < enemyBottomRight[0] &&
+            this.left + 30 > enemyBottomRight[0])) &&
         topIntersection
       );
     });
     if (obstacle || enemy) {
       this.left = obstacle
         ? obstacle.getParams().x - 30
-        : (enemy as Enemy)!.left - 30;
+        : enemy instanceof Deadline
+          ? (enemy as Deadline)!.left + 800 - 30
+          : (enemy as Enemy)!.left - 30;
       this.node?.classList.add('boom');
       this.destroyed = true;
       setTimeout(() => {

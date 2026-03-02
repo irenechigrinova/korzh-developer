@@ -21,6 +21,22 @@
   }
 }
 
+.sq {
+  width: 50px;
+  height: 50px;
+  bottom: 80px;
+  background-image: url(./enemies/sq.png);
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: 0 0;
+
+  &.active {
+    .enemy-score {
+      opacity: 0;
+    }
+  }
+}
+
 .enemy-score {
   bottom: -30px;
 }
@@ -292,3 +308,237 @@
     transform: translate(1300px, 0);
   }
 }
+
+.nikolina {
+  width: 80px;
+  height: 80px;
+  transform: translate(-270px, 0);
+  position: absolute;
+  top: 80px;
+  left: 0;
+  z-index: 2;
+  animation: nikolina 3500ms cubic-bezier(.05,.39,1,-0.02) 200ms forwards;
+}
+
+.nikolina .avatar {
+  width: 80px;
+  height: 80px;
+  background-image: url(./boss/nikolina.png);
+  background-size: contain;
+  border: 4px solid;
+  border-radius: 50%;
+  position: absolute;
+  top: 65px;
+  left: 187px;
+}
+
+.bogi {
+  width: 80px;
+  height: 80px;
+  transform: translate(-270px, 0);
+  position: absolute;
+  top: 80px;
+  left: 0;
+  z-index: 2;
+  animation: bogi 3500ms cubic-bezier(.05,.39,1,-0.02) 200ms forwards;
+}
+
+.bogi .avatar {
+  width: 80px;
+  height: 80px;
+  background-image: url(./leads/bogi.png);
+  background-size: contain;
+  border: 4px solid;
+  border-radius: 50%;
+  position: absolute;
+  top: 65px;
+  left: 187px;
+}
+
+.boss-bubble span {
+  color: black;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+@keyframes nikolina {
+  0% {
+    transform: translate(-270px, 0);
+  }
+  100% {
+    transform: translate(1500px, 0);
+  }
+}
+
+@keyframes bogi {
+  0% {
+    transform: translate(-270px, 0);
+  }
+  100% {
+    transform: translate(1500px, 0);
+  }
+}
+
+.ermakov {
+  width: 1200px;
+  height: 100px;
+  transform: translate(-1200px, 0);
+  position: absolute;
+  bottom: 95px;
+  left: 0;
+  z-index: 2;
+  animation: ermakovMove 6000ms linear 800ms forwards;
+}
+
+.ermakov .avatar {
+  width: 120px;
+  height: 120px;
+  position: absolute;
+  top: 0px;
+  right: 0;
+  z-index: 2;
+  background-image: url(./boss/ermakov.png);
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: 0 3px;
+  animation: ermakov 400ms linear infinite;
+}
+
+.ermakov .fire {
+  width: 100%;
+  height: 50px;
+  background-image: url(./boss/fire-pixel.gif);
+  background-size: contain;
+  position: absolute;
+  bottom: -20px;
+  z-index: 9;
+  right: 110px;
+}
+
+.ermakov .boss-bubble {
+    position: absolute;
+    right: 50px;
+    bottom: 63px;
+}
+
+@keyframes ermakov {
+  0%, 50% { background-position: 0 3px; }
+  50.01%, 100% { background-position: -96px 3px; }
+}
+
+@keyframes ermakovMove {
+  0% {
+    transform: translate(-1200px, 0);
+    opacity: 1;
+  }
+  99% {
+    transform: translate(100px, 0);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(100px, 0);
+    opacity: 0;
+  }
+}
+
+.deadline {
+  width: 150px;
+  height: 150px;
+  position: absolute;
+  bottom: 80px;
+  z-index: 9;
+  opacity: 0;
+  transition: transform 200ms, opacity 2500ms;
+}
+
+.deadline .avatar {
+  width: 150px;
+  height: 150px;
+  background-image: url(./boss/deadline.png);
+  background-size: cover;
+  position: absolute;
+  z-index: 9;
+  background-repeat: no-repeat;
+  background-position: 0 0;
+  animation: deadline 800ms linear infinite;
+}
+
+.deadline .boss-bubble {
+  left: -200px;
+  top: -50px;
+}
+
+.deadline .health {
+  width: 10px;
+  height: 100%;
+  border-radius: 20px;
+  background-color: red;
+  position: absolute;
+  right: -10px;
+  bottom: 0;
+  transition: height 200ms;
+}
+
+.deadline .boom {
+  background-image: url(./boss/boom.gif);
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  width: 150px;
+  height: 150px;
+  opacity: 0;
+}
+
+.deadline .boom.animated {
+  opacity: 1;
+  animation: deadlineBoom 100ms 1000ms forwards;
+}
+
+.deadline.destroyed {
+  .avatar {
+    display: none;
+  }
+
+  .boss-bubble {
+    display: none;
+  }
+}
+
+@keyframes deadline {
+  0%, 50% { background-position: 0 0; }
+  50.01%, 100% { background-position: -152px 0; }
+}
+
+@keyframes deadlineBoom {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.fireball-b,
+.fireball-g {
+  width: 30px;
+  height: 30px;
+  position: absolute;
+  bottom: 80px;
+  background-repeat: no-repeat;
+  background-size: contain;
+  z-index: 10;
+  border-radius: 50%;
+
+  .enemy-score {
+    display: none;
+  }
+}
+
+.fireball-g {
+  background-image: url("./level2/fire-green.gif");
+}
+
+.fireball-b {
+  background-image: url("./level2/fire-blue.gif");
+}
+

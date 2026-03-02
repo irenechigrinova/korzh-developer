@@ -2,24 +2,32 @@ import { BaseScene } from '@/base/BaseScene';
 import { Enemy } from '@/base/Enemy';
 import { Obstacle } from '@/base/Obstacle';
 import { Boss } from '@/controllers/enemies/Boss';
+import { Deadline } from '@/controllers/enemies/Deadline';
 import { TBoss, TLevel } from '@/types';
 
 export class Level extends BaseScene {
   private bgOffset: number;
   private bgOffsetLast: number;
   private obstacles: Record<number, Obstacle[]>;
-  private enemies: Record<number, (Enemy | Boss)[]>;
+  private enemies: Record<number, (Enemy | Boss | Deadline)[]>;
   private onChangeScene: () => void;
   private isBossIntro: boolean;
   private bossesShown: TBoss[];
   public startLevel: () => void;
+  public getPlayerPosition: () => Record<string, any>;
   private prepareObstacles: (
     remove: (id: string) => void,
+    getPlayerPosition: () => Record<string, any>,
+    hitPlayer: () => void,
   ) => Record<number, Obstacle[]>;
-  private prepareEnemies: (level: Level) => Record<number, (Enemy | Boss)[]>;
+  private prepareEnemies: (
+    level: Level,
+  ) => Record<number, (Enemy | Boss | Deadline)[]>;
+  private hitPlayer: () => void;
 
   score: (num: number) => void;
   name: TLevel;
+  isBossScene: boolean;
 
   private removeObstacle(id: string) {
     this.obstacles = {
@@ -35,13 +43,13 @@ export class Level extends BaseScene {
     this.enemies = {
       ...this.enemies,
       [this.bgOffset]: this.enemies[this.bgOffset].filter(
-        (item) => item.getId() !== id,
+        (item) => item.getId?.() !== id,
       ),
     };
     document.querySelector(`#enemy-${id}`)?.remove();
   }
 
-  public onShowBoss(type: TBoss) {
+  public onShowBoss(type: TBoss, delay: number) {
     this.isBossIntro = true;
     this.bossesShown.push(type);
     (document.querySelector('#main-audio') as HTMLAudioElement)!.pause();
@@ -57,7 +65,7 @@ export class Level extends BaseScene {
       ) as HTMLAudioElement)!.currentTime = 0;
       (document.querySelector('#main-audio') as HTMLAudioElement)!.play();
       this.isBossIntro = false;
-    }, 7000);
+    }, delay);
   }
 
   constructor(params: {
@@ -69,8 +77,14 @@ export class Level extends BaseScene {
     bgLast: number;
     prepareObstacles: (
       remove: (id: string) => void,
+      getPlayerPosition: () => Record<string, any>,
+      hitPlayer: () => void,
     ) => Record<number, Obstacle[]>;
-    prepareEnemies: (level: Level) => Record<number, (Enemy | Boss)[]>;
+    prepareEnemies: (
+      level: Level,
+    ) => Record<number, (Enemy | Boss | Deadline)[]>;
+    getPlayerPosition: () => Record<string, any>;
+    hitPlayer: () => void;
   }) {
     super(params.nextLevel);
 
@@ -82,11 +96,18 @@ export class Level extends BaseScene {
     this.isBossIntro = false;
     this.bossesShown = [];
     this.startLevel = params.startLevel;
+    this.getPlayerPosition = params.getPlayerPosition;
+    this.hitPlayer = params.hitPlayer;
 
     this.prepareEnemies = params.prepareEnemies;
     this.prepareObstacles = params.prepareObstacles;
-    this.obstacles = params.prepareObstacles(this.removeObstacle.bind(this));
+    this.obstacles = params.prepareObstacles(
+      this.removeObstacle.bind(this),
+      this.getPlayerPosition.bind(this),
+      this.hitPlayer.bind(this),
+    );
     this.enemies = params.prepareEnemies(this);
+    this.isBossScene = false;
   }
 
   init() {}
@@ -114,10 +135,11 @@ export class Level extends BaseScene {
     });
   }
 
-  private setStyles() {
+  private setStyles(bgOffset: number) {
     (this.node!.querySelector(
       '.game-body',
     ) as HTMLDivElement)!.style.backgroundPosition = `${this.bgOffset}px 0`;
+    this.obstacles[bgOffset]?.forEach((item) => item.deactivate());
     this.drawObstacles();
     this.drawEnemies();
   }
@@ -140,13 +162,13 @@ export class Level extends BaseScene {
     bottom?: number,
     isMoving?: boolean,
   ) {
-    if (this.isBossIntro) return false;
+    if (this.isBossIntro || this.isBossScene) return false;
 
     const offset = this.bgOffset;
     if (direction === 'prev') {
       if (this.bgOffset !== 0) {
         this.bgOffset += 1200;
-        this.setStyles();
+        this.setStyles(offset);
         this.destroyEnemies(offset);
         this.onChangeScene();
       }
@@ -154,9 +176,13 @@ export class Level extends BaseScene {
     if (direction === 'next') {
       if (this.bgOffset !== this.bgOffsetLast) {
         this.bgOffset -= 1200;
-        this.setStyles();
+        this.setStyles(offset);
         this.destroyEnemies(offset);
         this.onChangeScene();
+
+        if (this.bgOffset === this.bgOffsetLast) {
+          this.isBossScene = true;
+        }
       }
     }
     return true;
@@ -180,9 +206,8 @@ export class Level extends BaseScene {
   }
 
   public onTick() {
-    if (!this.enemies[this.bgOffset]) return;
-    this.enemies[this.bgOffset].forEach((enemy) => {
-      const isBoss = enemy instanceof Boss;
+    (this.enemies[this.bgOffset] ?? []).forEach((enemy) => {
+      const isBoss = enemy instanceof Boss || enemy instanceof Deadline;
       if (!isBoss) {
         if (enemy.state === 'active') {
           enemy.setLeft();
@@ -218,9 +243,29 @@ export class Level extends BaseScene {
     div.className = 'enemies';
     document.querySelector('.game-body')?.append(div);
 
+    const offset = this.bgOffset;
+    this.bgOffset = 0;
+    this.setStyles(offset);
     this.enemies = this.prepareEnemies(this);
-    this.obstacles = this.prepareObstacles(this.removeObstacle.bind(this));
+    this.obstacles = this.prepareObstacles(
+      this.removeObstacle.bind(this),
+      this.getPlayerPosition.bind(this),
+      this.hitPlayer.bind(this),
+    );
     this.drawObstacles();
     this.drawEnemies();
+
+    (document.querySelector(
+      '#boss-appearance-audio',
+    ) as HTMLAudioElement)!.pause();
+    (document.querySelector(
+      '#boss-appearance-audio',
+    ) as HTMLAudioElement)!.currentTime = 0;
+    (document.querySelector('#main-audio') as HTMLAudioElement)!.play();
+  }
+
+  public destroy(): void {
+    this.obstacles[this.bgOffset]?.forEach((item) => item.deactivate());
+    this.enemies[this.bgOffset]?.forEach((item) => item.die());
   }
 }

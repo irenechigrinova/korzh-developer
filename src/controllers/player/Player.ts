@@ -1,7 +1,8 @@
+import { Enemy } from '@/base/Enemy';
 import { Level } from '@/base/Level';
-import { Movement } from '@/base/Movement';
 
 import '../../styles/player.style.scss';
+import { Movement } from '@/base/Movement';
 import { POSITION_CONFIG } from '@/base/utils';
 import { Boss } from '@/controllers/enemies/Boss';
 import { Fireball } from '@/controllers/player/Fireball';
@@ -47,7 +48,7 @@ export class Player extends Movement {
       score,
       'player',
       {
-        bottom: 0,
+        bottom: level.name === '2' ? 241 : 0,
         height: 120,
         left: 0,
         moveDirection: 'right',
@@ -141,6 +142,9 @@ export class Player extends Movement {
     this.playerNode!.classList.remove('idle');
     this.playerNode!.classList.remove('running');
     this.playerNode!.classList.add('hide');
+    setTimeout(() => {
+      this.level.nextLevel();
+    }, 1000);
   }
 
   private handleMove() {
@@ -148,7 +152,7 @@ export class Player extends Movement {
 
     this.setLeft();
 
-    if (this.left > 920 && this.left <= 1050) {
+    if (this.level.name === '1' && this.left > 920 && this.left <= 1050) {
       const progress = this.level.getProgress?.();
       if (progress === 'end') {
         document.removeEventListener('keydown', this.handleKeyboardDown);
@@ -175,6 +179,16 @@ export class Player extends Movement {
     });
   }
 
+  public getDamage() {
+    if (this.getMyLevel() === 'middle') {
+      this.die();
+    } else {
+      this.levelChanging = true;
+      this.downgrade();
+      this.updateLevel();
+    }
+  }
+
   private checkEnemyCollision() {
     if (this.levelChanging) return;
 
@@ -193,16 +207,27 @@ export class Player extends Movement {
           playerTopLeft[0] >= enemy.left) ||
         (playerTopLeft[0] <= enemy.left + enemy.width &&
           playerTopRight[0] >= enemy.left + enemy.width);
-      const conditionVertical = Math.abs(enemy.bottom - this.bottom) <= 10;
+      let conditionVertical = Math.abs(enemy.bottom - this.bottom) <= 10;
+      if (enemy.type === 'fireball-g' || enemy.type === 'fireball-b') {
+        const myHeight = this.bottom + 115;
+        conditionVertical =
+          (enemy.bottom >= this.bottom &&
+            enemy.bottom + enemy.height <= myHeight) ||
+          (enemy.bottom < this.bottom &&
+            enemy.bottom + enemy.height >= this.bottom) ||
+          (enemy.bottom < myHeight && enemy.bottom + enemy.height > myHeight);
+      }
       if (conditionHorizontal && conditionVertical) {
-        if (this.getMyLevel() === 'middle') {
-          this.die();
-          break;
+        if (enemy.type === 'sq') {
+          if (enemy.bottom + enemy.height > this.bottom) {
+            (enemy as Enemy).destroy();
+          } else {
+            this.getDamage();
+          }
         } else {
-          this.levelChanging = true;
-          this.downgrade();
-          this.updateLevel();
+          this.getDamage();
         }
+        break;
       }
     }
   }
@@ -226,6 +251,7 @@ export class Player extends Movement {
     this.playerNode.id = 'player';
     this.playerNode.classList.add(this.getMyLevel());
     this.playerNode.classList.add('idle');
+    this.setStyles();
 
     document.querySelector('section .game-body')?.appendChild(this.playerNode);
     document.addEventListener('keydown', this.handleKeyboardDown.bind(this));
@@ -262,5 +288,15 @@ export class Player extends Movement {
   public destroyFireballs() {
     this.fireballs.forEach((item) => item.destroy());
     this.fireballs = [];
+  }
+
+  public getPosition() {
+    return {
+      bottom: this.bottom,
+      height: this.height,
+      left: this.left,
+      moveDirection: this.moveDirection,
+      width: this.width,
+    };
   }
 }

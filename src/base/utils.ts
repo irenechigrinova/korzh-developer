@@ -16,7 +16,52 @@ export const POSITION_CONFIG = {
       [left, bottom],
     ],
   },
+  deadline: {
+    bottom: (left: number, bottom: number) => [
+      [left, bottom + 150],
+      [left + 150, bottom + 150],
+      [left + 150, bottom],
+      [left, bottom],
+    ],
+    top: (left: number, bottom: number) => [
+      [left, bottom + 150],
+      [left + 150, bottom + 150],
+      [left + 150, bottom],
+      [left, bottom],
+    ],
+  },
+
   fireball: {
+    bottom: (left: number, bottom: number) => [
+      [left, bottom + 30],
+      [left + 30, bottom + 30],
+      [left + 30, bottom],
+      [left, bottom],
+    ],
+    top: (left: number, bottom: number) => [
+      [left, bottom + 30],
+      [left + 30, bottom + 30],
+      [left + 30, bottom],
+      [left, bottom],
+    ],
+  },
+
+  'fireball-b': {
+    bottom: (left: number, bottom: number) => [
+      [left, bottom + 30],
+      [left + 30, bottom + 30],
+      [left + 30, bottom],
+      [left, bottom],
+    ],
+    top: (left: number, bottom: number) => [
+      [left, bottom + 30],
+      [left + 30, bottom + 30],
+      [left + 30, bottom],
+      [left, bottom],
+    ],
+  },
+
+  'fireball-g': {
     bottom: (left: number, bottom: number) => [
       [left, bottom + 30],
       [left + 30, bottom + 30],
@@ -46,6 +91,34 @@ export const POSITION_CONFIG = {
     ],
   },
 
+  sq: {
+    bottom: (left: number, bottom: number) => [
+      [left, bottom + 50],
+      [left + 50, bottom + 50],
+      [left + 50, bottom],
+      [left, bottom],
+    ],
+    top: (left: number, bottom: number) => [
+      [left, bottom + 50],
+      [left + 50, bottom + 50],
+      [left + 50, bottom],
+      [left, bottom],
+    ],
+  },
+  sqTop: {
+    bottom: (left: number, bottom: number) => [
+      [left, bottom + 50],
+      [left, bottom + 50],
+      [left, bottom],
+      [left, bottom],
+    ],
+    top: (left: number, bottom: number) => [
+      [left + 20, bottom + 50],
+      [left + 20, bottom + 50],
+      [left + 20, bottom],
+      [left + 20, bottom],
+    ],
+  },
   task: {
     bottom: (left: number, bottom: number) => [
       [left, bottom + 80],
