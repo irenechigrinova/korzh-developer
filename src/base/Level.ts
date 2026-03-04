@@ -10,7 +10,7 @@ export class Level extends BaseScene {
   private bgOffsetLast: number;
   private obstacles: Record<number, Obstacle[]>;
   private enemies: Record<number, (Enemy | Boss | Deadline)[]>;
-  private onChangeScene: () => void;
+  private onChangeScene: (destroyAbility?: boolean) => void;
   private isBossIntro: boolean;
   private bossesShown: TBoss[];
   public startLevel: () => void;
@@ -178,9 +178,9 @@ export class Level extends BaseScene {
         this.bgOffset -= 1200;
         this.setStyles(offset);
         this.destroyEnemies(offset);
-        this.onChangeScene();
+        this.onChangeScene(this.name === '2' && this.bgOffset === -6000);
 
-        if (this.bgOffset === this.bgOffsetLast) {
+        if (this.name === '2' && this.bgOffset === this.bgOffsetLast) {
           this.isBossScene = true;
         }
       }
@@ -252,6 +252,7 @@ export class Level extends BaseScene {
       this.getPlayerPosition.bind(this),
       this.hitPlayer.bind(this),
     );
+    this.bossesShown = [];
     this.drawObstacles();
     this.drawEnemies();
 
@@ -266,6 +267,7 @@ export class Level extends BaseScene {
 
   public destroy(): void {
     this.obstacles[this.bgOffset]?.forEach((item) => item.deactivate());
-    this.enemies[this.bgOffset]?.forEach((item) => item.die());
+    this.enemies[this.bgOffset]?.forEach((item) => (item as Enemy).dieHard());
+    this.node?.remove();
   }
 }

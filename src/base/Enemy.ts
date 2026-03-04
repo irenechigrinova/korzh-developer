@@ -75,6 +75,11 @@ export class Enemy extends Movement {
     }, 1000);
   }
 
+  dieHard() {
+    this.node!.remove();
+    this.level.removeEnemy?.(this.getId());
+  }
+
   destroy(): void {
     if (!this.node) return;
 

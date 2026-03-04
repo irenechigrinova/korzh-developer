@@ -502,6 +502,90 @@
   .boss-bubble {
     display: none;
   }
+  
+  @for $i from 1 through 7 {
+    &.e-#{$i} {
+      animation: showEnding#{$i} 100ms 1200ms forwards;
+    }
+  }
+}
+
+@keyframes showEnding1 {
+  from {
+    background-image: url(./boss/deadline.png);
+  }
+  to {
+    background-image: url(./level2/ending/e-1.png);
+    width: 300px;
+    background-size: contain;
+    background-repeat: no-repeat;
+  }
+}
+@keyframes showEnding2 {
+  from {
+    background-image: url(./boss/deadline.png);
+  }
+  to {
+    background-image: url(./level2/ending/e-2.png);
+    width: 300px;
+    background-size: contain;
+    background-repeat: no-repeat;
+  }
+}
+@keyframes showEnding3 {
+  from {
+    background-image: url(./boss/deadline.png);
+  }
+  to {
+    background-image: url(./level2/ending/e-3.png);
+    width: 300px;
+    background-size: contain;
+    background-repeat: no-repeat;
+  }
+}
+@keyframes showEnding4 {
+  from {
+    background-image: url(./boss/deadline.png);
+  }
+  to {
+    background-image: url(./level2/ending/e-4.png);
+    width: 300px;
+    background-size: contain;
+    background-repeat: no-repeat;
+  }
+}
+@keyframes showEnding5 {
+  from {
+    background-image: url(./boss/deadline.png);
+  }
+  to {
+    background-image: url(./level2/ending/e-5.png);
+    width: 300px;
+    background-size: contain;
+    background-repeat: no-repeat;
+  }
+}
+@keyframes showEnding6 {
+  from {
+    background-image: url(./boss/deadline.png);
+  }
+  to {
+    background-image: url(./level2/ending/e-6.png);
+    width: 300px;
+    background-size: contain;
+    background-repeat: no-repeat;
+  }
+}
+@keyframes showEnding7 {
+  from {
+    background-image: url(./boss/deadline.png);
+  }
+  to {
+    background-image: url(./level2/ending/e-7.png);
+    width: 300px;
+    background-size: contain;
+    background-repeat: no-repeat;
+  }
 }
 
 @keyframes deadline {

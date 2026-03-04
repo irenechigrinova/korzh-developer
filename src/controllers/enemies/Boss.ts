@@ -177,4 +177,8 @@ export class Boss {
   die() {
     this.node?.remove();
   }
+
+  dieHard() {
+    this.node?.remove();
+  }
 }

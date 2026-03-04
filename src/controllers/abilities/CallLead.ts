@@ -177,7 +177,9 @@ export class CallLead {
     this.state = 'active';
     this.node!.querySelector('.leads')?.classList.add('activated');
     const willHelp =
-      Math.floor(Math.random() * 10) > this.leads[this.activeLead].willHelp;
+      this.level.name === '2' && this.leads[this.activeLead].name === 'igor'
+        ? false
+        : Math.floor(Math.random() * 10) > this.leads[this.activeLead].willHelp;
     if (willHelp) {
       this.willHelp();
     } else {

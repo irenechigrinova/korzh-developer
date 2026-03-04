@@ -112,7 +112,6 @@ export class GameController {
 
   private playerDead() {
     this.state.paused = true;
-    this.state.curLevel?.destroy();
     const div = document.createElement('div');
     div.className = 'dialog-container';
     div.innerHTML = `
@@ -136,6 +135,7 @@ export class GameController {
         this.player?.destroy();
         document.querySelector('#player')?.remove();
         this.callLeadAbility?.destroy();
+        this.state.curLevel?.destroy();
         this.state.curLevel?.restart?.();
         this.player = new Player(
           this.state.curLevel as LevelBase,
@@ -210,7 +210,7 @@ export class GameController {
     const Level = new Component(
       () => this.nextLevel(),
       (num: number) => this.setScore(num),
-      () => this.handleChangeScene(),
+      (val?: boolean) => this.handleChangeScene(val),
       start,
       () => this.player?.getPosition() ?? {},
       () => this.player?.getDamage(),
@@ -219,8 +219,11 @@ export class GameController {
     Level.init();
   }
 
-  private handleChangeScene() {
+  private handleChangeScene(destroyAbility = false) {
     this.player?.destroyFireballs();
+    if (destroyAbility) {
+      this.callLeadAbility?.destroy();
+    }
   }
 
   constructor() {
@@ -283,10 +286,8 @@ export class GameController {
     `;
     document.querySelector('.body-loading')!.appendChild(div);
 
-    //this.state.levelIdx = idx;
-    //this.setLevel(this.state.levels[idx]);
-    this.state.levelIdx = 3;
-    this.setLevel(this.state.levels[3]);
+    this.state.levelIdx = idx;
+    this.setLevel(this.state.levels[idx]);
     this.handleTick();
   }
 }

@@ -163,6 +163,7 @@ export class Deadline {
     if (this.lives === 0) {
       this.state = 'destroyed';
       this.node!.classList.add('destroyed');
+      this.node!.classList.add(`e-${Math.round(Math.random() * (8 - 1) + 1)}`);
       clearTimeout(this.timer);
       clearTimeout(this.fireTimer);
       (this.node!.querySelector('.boom') as HTMLDivElement)!.classList.add(

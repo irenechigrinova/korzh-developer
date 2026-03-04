@@ -219,7 +219,10 @@ export class Player extends Movement {
       }
       if (conditionHorizontal && conditionVertical) {
         if (enemy.type === 'sq') {
-          if (enemy.bottom + enemy.height > this.bottom) {
+          if (
+            enemy.bottom + enemy.height > this.bottom &&
+            enemy.bottom !== this.bottom
+          ) {
             (enemy as Enemy).destroy();
           } else {
             this.getDamage();
