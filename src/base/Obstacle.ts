@@ -4,12 +4,14 @@ import { TObstacle, TObstacleType } from '@/types';
 
 export class Obstacle {
   private params: TObstacle;
-  private state: 'active' | 'destroyed';
   private node: HTMLDivElement | null;
   private id: string;
   private animationId: number;
   private getPlayerPosition: undefined | (() => Record<string, any>);
-  private hit: () => void;
+  private hit: (full?: boolean) => void;
+  private isDestroying: boolean;
+
+  state: 'active' | 'destroyed';
 
   destroy(level: 'middle' | 'senior', score: (val: number) => void) {
     if (this.state !== 'active') return;
@@ -45,6 +47,7 @@ export class Obstacle {
 
   deactivate() {
     this.node = null;
+    this.state = 'destroyed';
     window.cancelAnimationFrame(this.animationId);
     this.animationId = 0;
   }
@@ -57,9 +60,10 @@ export class Obstacle {
     width?: number,
     height?: number,
     getPlayerPosition?: () => Record<string, number>,
-    hit?: () => void,
+    hit?: (full?: boolean) => void,
   ) {
     this.id = uuidv4();
+    this.isDestroying = false;
     switch (type) {
       default:
       case 'question':
@@ -77,6 +81,7 @@ export class Obstacle {
         };
         break;
       case 'brick-transparent':
+      case 'bridge':
         this.params = {
           active: true,
           destructible: false,
@@ -179,8 +184,16 @@ export class Obstacle {
   }
 
   private getClientRectIntersection() {
-    const { height, x } = this.params;
+    const { height, type, width, x } = this.params;
     const playerPosition = this.getPlayerPosition?.() ?? {};
+    if (type === 'bridge') {
+      return (
+        playerPosition.bottom > 117 &&
+        playerPosition.bottom < 120 &&
+        playerPosition.left + 20 > x &&
+        playerPosition.left + 20 < x + width
+      );
+    }
     if (playerPosition.moveDirection === 'right') {
       return (
         playerPosition.left + playerPosition.width >= x - height &&
@@ -196,55 +209,68 @@ export class Obstacle {
   private updateClient() {
     this.animationId = window.requestAnimationFrame(() => {
       const { height, rotate = 0, type, width, x: ax, y: ay } = this.params;
-      let rotation = type.includes('green')
-        ? (rotate ?? 0) + 2
-        : (rotate ?? 0) - 2;
-      if (Math.abs(rotation) > 360) rotation = 0;
-      this.setRotation(rotation);
+      if (type === 'bridge') {
+        if (this.getClientRectIntersection() && !this.isDestroying) {
+          this.isDestroying = true;
+          this.node?.classList.add('destroying');
+          setTimeout(() => {
+            this.deactivate();
+            if (this.getClientRectIntersection()) {
+              this.hit(true);
+            }
+          }, 4100);
+        }
+      } else {
+        let rotation = type.includes('green')
+          ? (rotate ?? 0) + 2
+          : (rotate ?? 0) - 2;
+        if (Math.abs(rotation) > 360) rotation = 0;
+        this.setRotation(rotation);
 
-      if (this.getClientRectIntersection()) {
-        const playerPosition = this.getPlayerPosition?.() ?? {};
+        if (this.getClientRectIntersection()) {
+          const playerPosition = this.getPlayerPosition?.() ?? {};
 
-        const isGreen = type.includes('green');
-        const rad = (rotate * Math.PI) / 180;
+          const isGreen = type.includes('green');
+          const rad = (rotate * Math.PI) / 180;
 
-        const cos = Math.cos(-rad);
-        const sin = Math.sin(-rad);
-        const x = width + ax;
-        const y = ay + height;
-        const px = width + ax - 10;
-        const py = ay;
+          const cos = Math.cos(-rad);
+          const sin = Math.sin(-rad);
+          const x = width + ax;
+          const y = ay + height;
+          const px = width + ax - 10;
+          const py = ay;
 
-        const dx = x - px;
-        const dy = y - py;
+          const dx = x - px;
+          const dy = y - py;
 
-        const rotatedX = px + dx * cos - dy * sin;
-        const rotatedY = py + dx * sin + dy * cos;
+          const rotatedX = px + dx * cos - dy * sin;
+          const rotatedY = py + dx * sin + dy * cos;
 
-        const bottomCondition = isGreen
-          ? rotatedY >= playerPosition.bottom
-          : rotatedY <= playerPosition.bottom + playerPosition.height;
+          const bottomCondition = isGreen
+            ? rotatedY >= playerPosition.bottom
+            : rotatedY <= playerPosition.bottom + playerPosition.height;
 
-        if (playerPosition.moveDirection === 'right') {
-          if (
-            playerPosition.left + playerPosition.width >= rotatedX &&
-            playerPosition.left <= rotatedX &&
-            bottomCondition
-          ) {
-            this.hit();
-          }
-        } else {
-          if (
-            playerPosition.left <= rotatedX &&
-            playerPosition.left + playerPosition.width >= rotatedX &&
-            bottomCondition
-          ) {
-            this.hit();
+          if (playerPosition.moveDirection === 'right') {
+            if (
+              playerPosition.left + playerPosition.width >= rotatedX &&
+              playerPosition.left <= rotatedX &&
+              bottomCondition
+            ) {
+              this.hit();
+            }
+          } else {
+            if (
+              playerPosition.left <= rotatedX &&
+              playerPosition.left + playerPosition.width >= rotatedX &&
+              bottomCondition
+            ) {
+              this.hit();
+            }
           }
         }
       }
 
-      if (this.node) this.updateClient();
+      if (this.node && !this.isDestroying) this.updateClient();
     });
   }
 
@@ -271,7 +297,7 @@ export class Obstacle {
 
     container.appendChild(this.node);
 
-    if (this.params.type.includes('client')) {
+    if (this.params.type.includes('client') || this.params.type === 'bridge') {
       this.updateClient();
     }
   }

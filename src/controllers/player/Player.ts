@@ -179,7 +179,10 @@ export class Player extends Movement {
     });
   }
 
-  public getDamage() {
+  public getDamage(full?: boolean) {
+    if (full) {
+      this.die();
+    }
     if (this.getMyLevel() === 'middle') {
       this.die();
     } else {

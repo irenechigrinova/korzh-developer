@@ -206,14 +206,14 @@ export class GameController {
       }
     };
 
-    this.state.curLevel?.destroy();
+    this.state.curLevel?.destroy(true);
     const Level = new Component(
       () => this.nextLevel(),
       (num: number) => this.setScore(num),
       (val?: boolean) => this.handleChangeScene(val),
       start,
       () => this.player?.getPosition() ?? {},
-      () => this.player?.getDamage(),
+      (full?: boolean) => this.player?.getDamage(full),
     );
     this.state.curLevel = Level as LevelBase;
     Level.init();
@@ -288,6 +288,8 @@ export class GameController {
 
     this.state.levelIdx = idx;
     this.setLevel(this.state.levels[idx]);
+    //this.state.levelIdx = 3;
+    //this.setLevel(this.state.levels[3]);
     this.handleTick();
   }
 }

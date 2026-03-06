@@ -141,7 +141,7 @@ export class Boss {
         new Task(
           this.level,
           {
-            bottom: 119,
+            bottom: 118,
             left: randLeft(),
             moveDirection: Math.floor(randLeft()) % 2 === 0 ? 'left' : 'right',
           },

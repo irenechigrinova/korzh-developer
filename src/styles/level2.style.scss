@@ -27,8 +27,18 @@
 }
 
 .brick-transparent,
+.bridge,
 .wall {
   bottom: 80px;
+}
+
+.bridge {
+  background-image: url("./level2/bridge.png");
+  background-size: cover;
+
+  &.destroying {
+    animation: bridgeDestroying 4000ms forwards;
+  }
 }
 
 .client-green,
@@ -43,4 +53,34 @@
 
 .client-blue {
   background-image: url("./level2/fire-blue.gif");
+}
+
+@keyframes bridgeDestroying {
+  0% {
+    opacity: 1;
+  }
+  20% {
+    opacity: 0.1;
+  }
+  40% {
+    opacity: 1;
+  }
+  60% {
+    opacity: 0.1;
+  }
+  70% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 0.1;
+  }
+  90% {
+    opacity: 1;
+  }
+  95% {
+    opacity: 0.1;
+  }
+  100% {
+    opacity: 0;
+  }
 }

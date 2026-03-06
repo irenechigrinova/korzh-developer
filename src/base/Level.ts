@@ -18,12 +18,12 @@ export class Level extends BaseScene {
   private prepareObstacles: (
     remove: (id: string) => void,
     getPlayerPosition: () => Record<string, any>,
-    hitPlayer: () => void,
+    hitPlayer: (full?: boolean) => void,
   ) => Record<number, Obstacle[]>;
   private prepareEnemies: (
     level: Level,
   ) => Record<number, (Enemy | Boss | Deadline)[]>;
-  private hitPlayer: () => void;
+  private hitPlayer: (full?: boolean) => void;
 
   score: (num: number) => void;
   name: TLevel;
@@ -265,9 +265,11 @@ export class Level extends BaseScene {
     (document.querySelector('#main-audio') as HTMLAudioElement)!.play();
   }
 
-  public destroy(): void {
+  public destroy(full?: boolean): void {
     this.obstacles[this.bgOffset]?.forEach((item) => item.deactivate());
     this.enemies[this.bgOffset]?.forEach((item) => (item as Enemy).dieHard());
-    this.node?.remove();
+    if (full) {
+      this.node?.remove();
+    }
   }
 }

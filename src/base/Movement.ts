@@ -237,7 +237,8 @@ export class Movement extends BaseScene {
       if (
         !type.includes('tube') &&
         !type.includes('void') &&
-        type !== 'brick-transparent'
+        type !== 'brick-transparent' &&
+        type !== 'bridge'
       ) {
         return false;
       }
@@ -281,6 +282,15 @@ export class Movement extends BaseScene {
         this.bottomBaseline !== this.initialBottomBaseline
       ) {
         this.left = this.moveDirection === 'right' ? x - 70 : x + width;
+        return;
+      }
+
+      if (
+        type === 'bridge' &&
+        obstacle.state === 'destroyed' &&
+        !this.isJumping
+      ) {
+        if (this.dieCallback) this.dieCallback();
         return;
       }
 

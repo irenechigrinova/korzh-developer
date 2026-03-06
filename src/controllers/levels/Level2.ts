@@ -12,7 +12,7 @@ import { Task } from '@/controllers/enemies/Task';
 const prepareObstacles = (
   remove: (id: string) => void,
   getPlayerPosition: () => Record<string, any>,
-  hitPlayer: () => void,
+  hitPlayer: (full?: boolean) => void,
 ) => ({
   '-6000': [new Obstacle('brick-transparent', 0, 400, remove, 1200, 40)],
   '-4800': [
@@ -20,7 +20,18 @@ const prepareObstacles = (
     new Obstacle('brick-transparent', 0, 322, remove, 296, 81),
     new Obstacle('brick-transparent', 854, 282, remove, 82, 119),
     new Obstacle('brick-transparent', 814, 0, remove, 122, 161),
-    new Obstacle('brick-transparent', 0, 0, remove, 815, 121),
+    new Obstacle('brick-transparent', 0, 0, remove, 296, 121),
+    new Obstacle(
+      'bridge',
+      295,
+      75,
+      remove,
+      520,
+      45,
+      getPlayerPosition,
+      hitPlayer,
+    ),
+    new Obstacle('void', 295, 0, remove, 520),
   ],
   '-3600': [
     new Obstacle('brick-transparent', 0, 400, remove, 1200, 40),
@@ -123,7 +134,7 @@ export class Level2 extends Level {
     onChangeScene: () => void,
     startLevel: () => void,
     getPlayerPosition: () => Record<string, any>,
-    hitPlayer: () => void,
+    hitPlayer: (full?: boolean) => void,
   ) {
     super({
       bgLast: -6000,

@@ -15,7 +15,8 @@ export type TObstacleType =
   | 'void'
   | 'brick-transparent'
   | 'client-green'
-  | 'client-blue';
+  | 'client-blue'
+  | 'bridge';
 
 export type TObstacle = {
   x: number;
