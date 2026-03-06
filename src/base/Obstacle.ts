@@ -208,6 +208,8 @@ export class Obstacle {
 
   private updateClient() {
     this.animationId = window.requestAnimationFrame(() => {
+      if (!this.node) return;
+
       const { height, rotate = 0, type, width, x: ax, y: ay } = this.params;
       if (type === 'bridge') {
         if (this.getClientRectIntersection() && !this.isDestroying) {

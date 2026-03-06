@@ -1,5 +1,6 @@
 import { Level as LevelBase } from '@/base/Level';
 import { CallLead } from '@/controllers/abilities/CallLead';
+import { Deadline } from '@/controllers/enemies/Deadline';
 import { AgeCheck } from '@/controllers/levels/AgeCheck';
 import { Intro } from '@/controllers/levels/Intro';
 import { Level1 } from '@/controllers/levels/Level1';
@@ -112,6 +113,12 @@ export class GameController {
 
   private playerDead() {
     this.state.paused = true;
+    this.state.curLevel?.getObstacles()?.forEach((item) => item.deactivate());
+    this.state.curLevel?.getEnemies()?.forEach((item) => {
+      if (item instanceof Deadline) {
+        item.deactivate();
+      }
+    });
     const div = document.createElement('div');
     div.className = 'dialog-container';
     div.innerHTML = `

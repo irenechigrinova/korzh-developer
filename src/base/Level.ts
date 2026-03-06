@@ -244,6 +244,8 @@ export class Level extends BaseScene {
     document.querySelector('.game-body')?.append(div);
 
     const offset = this.bgOffset;
+    this.isBossScene = false;
+    this.isBossIntro = false;
     this.bgOffset = 0;
     this.setStyles(offset);
     this.enemies = this.prepareEnemies(this);

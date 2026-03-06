@@ -178,7 +178,15 @@ export class Deadline {
     this.node?.remove();
   }
 
+  dieHard() {
+    this.die();
+  }
+
   getId() {
     return 'deadline';
+  }
+
+  deactivate() {
+    clearTimeout(this.fireTimer);
   }
 }
