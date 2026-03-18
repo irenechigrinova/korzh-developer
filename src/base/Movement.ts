@@ -91,7 +91,11 @@ export class Movement extends BaseScene {
 
     return obstacles
       .filter((obstacle) => {
-        if (obstacle.getParams().type.includes('client')) return false;
+        if (
+          obstacle.getParams().type.includes('client') ||
+          obstacle.state === 'destroyed'
+        )
+          return false;
 
         const [obstTopLeft, _, obstBottomRight, obstBottomLeft] =
           getObstacleCoords(obstacle);
@@ -119,7 +123,11 @@ export class Movement extends BaseScene {
 
     return obstacles
       .filter((obstacle) => {
-        if (obstacle.getParams().type.includes('client')) return false;
+        if (
+          obstacle.getParams().type.includes('client') ||
+          obstacle.state === 'destroyed'
+        )
+          return false;
 
         const [obstTopLeft, obstTopRight] = getObstacleCoords(obstacle);
 
@@ -195,8 +203,8 @@ export class Movement extends BaseScene {
   }
 
   private checkBaseline() {
+    const obstacles = this.level.getObstacles?.() ?? [];
     if (this.bottomBaseline !== this.initialBottomBaseline && !this.isJumping) {
-      const obstacles = this.level.getObstacles?.() ?? [];
       const obstacle = obstacles.find((obstacle) => {
         const params = obstacle.getParams();
         if (params.type.includes('client')) return false;
@@ -212,6 +220,19 @@ export class Movement extends BaseScene {
       });
       if (!obstacle) {
         if (this.type === 'task' || this.type === 'sq') {
+          const obstacleUnder = obstacles.find((item) => {
+            const params = item.getParams();
+            return (
+              this.bottom === params.y + params.height - 2 &&
+              Math.abs(this.left - params.x) < 50
+            );
+          });
+          if (!obstacleUnder) {
+            this.jumpDirection = 'down';
+            this.isJumping = true;
+            this.setBottom();
+            return;
+          }
           this.moveDirection =
             this.moveDirection === 'right' ? 'left' : 'right';
         } else {
@@ -371,7 +392,12 @@ export class Movement extends BaseScene {
     const { y } = intersected.getParams();
     const enemies = this.level?.getEnemies?.() ?? [];
     const enemy = enemies.find((item) => {
-      if (item instanceof Boss || item instanceof Cloud) return false;
+      if (
+        item instanceof Boss ||
+        item instanceof Cloud ||
+        item.state !== 'active'
+      )
+        return false;
       const xIntersection = this.getXIntersection(
         intersected,
         item.left,

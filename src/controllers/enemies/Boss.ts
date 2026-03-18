@@ -1,7 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 
 import { Level } from '@/base/Level';
-import { Bug } from '@/controllers/enemies/Bug';
 import { Task } from '@/controllers/enemies/Task';
 import { TBoss } from '@/types';
 

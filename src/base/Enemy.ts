@@ -68,7 +68,7 @@ export class Enemy extends Movement {
     if (!this.node) return;
 
     this.state = 'destroyed';
-    this.node.classList.add('die');
+    this.node.classList.add('destroyed');
     setTimeout(() => {
       this.node!.remove();
       this.level.removeEnemy?.(this.getId());

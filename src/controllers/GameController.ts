@@ -272,7 +272,7 @@ export class GameController {
       levelIdx: 0,
       levels: ['18+', 'intro', '1', '2', '3'],
       paused: false,
-      playerLevel: 'middle',
+      playerLevel: 'senior',
       score: 10000,
     };
     this.player = null;
@@ -329,8 +329,8 @@ export class GameController {
 
     //this.state.levelIdx = idx;
     //this.setLevel(this.state.levels[idx]);
-    this.state.levelIdx = 4;
-    this.setLevel(this.state.levels[4]);
+    this.state.levelIdx = 2;
+    this.setLevel(this.state.levels[2]);
     this.handleTick();
     setTimeout(() => {
       this.shield?.init();

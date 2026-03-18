@@ -21,7 +21,7 @@ export class Player extends Movement {
   private onDie: () => void;
 
   private levelChanging: boolean;
-  private keysPressed: string[];
+  private keysPressed: Record<string, boolean>;
 
   private lives: number;
   private shieldActive: boolean;
@@ -73,7 +73,7 @@ export class Player extends Movement {
     this.downgrade = downgrade;
     this.levelChanging = false;
     this.onDie = onDie;
-    this.keysPressed = [];
+    this.keysPressed = {};
     this.lives = 5;
     this.shieldActive = false;
   }
@@ -103,7 +103,7 @@ export class Player extends Movement {
   private handleKeyboardDown(e: KeyboardEvent) {
     if (!this.watch) return;
 
-    this.keysPressed.push(e.code);
+    this.keysPressed[e.code] = true;
 
     if (
       e.code === 'ArrowRight' ||
@@ -122,14 +122,17 @@ export class Player extends Movement {
 
   private handleKeyboardUp(e: KeyboardEvent) {
     if (!this.watch) return;
-    this.keysPressed = this.keysPressed.filter((key) => key !== e.code);
+    this.keysPressed[e.code] = false;
+    const keys = Object.keys(this.keysPressed);
 
     if (
-      !this.keysPressed.length &&
-      (e.code === 'ArrowRight' ||
-        e.code === 'KeyD' ||
-        e.code === 'ArrowLeft' ||
-        e.code === 'KeyA')
+      !keys.length ||
+      !(
+        this.keysPressed.ArrowRight ||
+        this.keysPressed.KeyD ||
+        this.keysPressed.ArrowLeft ||
+        this.keysPressed.KeyA
+      )
     ) {
       this.isMoving = false;
       this.setStyles();
