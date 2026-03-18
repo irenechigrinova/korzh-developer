@@ -27,7 +27,7 @@ export class Shield {
       'andrew',
       'stas',
     ];
-    this.curHelp = 6;
+    this.curHelp = 0;
     this.handlePause = onPause;
   }
 
@@ -90,6 +90,9 @@ export class Shield {
   }
 
   private handleHelp() {
+    (document.querySelector('.help-container')! as HTMLDivElement).className =
+      'help-container';
+
     switch (this.helps[this.curHelp]) {
       case 'ira':
       case 'polina':
@@ -126,8 +129,8 @@ export class Shield {
 
       setTimeout(() => {
         this.status = 'pending';
-        // this.curHelp =
-        //   this.curHelp + 1 > this.helps.length - 1 ? 0 : this.curHelp + 1;
+        this.curHelp =
+          this.curHelp + 1 > this.helps.length - 1 ? 0 : this.curHelp + 1;
         this.node!.classList.remove('active');
         this.node!.classList.add('pending');
         this.onManageShield(false);
@@ -137,7 +140,7 @@ export class Shield {
           item.changeBehaviour('classic');
           if (item instanceof Cloud) item.toggleFire(true);
         });
-      }, 50000);
+      }, 5000);
     }
   }
 
