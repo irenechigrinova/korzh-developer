@@ -1,0 +1,385 @@
+.intro {
+  position: relative;
+  top: 40%;
+  margin: auto;
+  animation: fadeOut 800ms 4200ms forwards;
+}
+
+.level3 {
+  .hearts {
+    display: none;
+  }
+}
+
+.fade-in {
+  color: white;
+  font-size: 44px;
+  text-align: center;
+  animation: fadeIn 1500ms forwards;
+  opacity: 0;
+
+  &.second {
+    font-size: 35px;
+    animation-delay: 1800ms;
+  }
+
+  &.small {
+    font-size: 14px !important;
+    animation-delay: 2500ms;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+  99% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+    display: none;
+  }
+}
+
+.with-bg {
+  .game-body {
+    background-color: #fff;
+    width: 1200px;
+    height: 600px;
+    margin: auto;
+    position: relative;
+    top: calc((100vh / 2) - 300px);
+    background-image: url("./level3/level3.png");
+    background-size: cover;
+    background-repeat: no-repeat;
+    position: relative;
+    overflow: hidden;
+    transition: background-image 1500ms;
+  }
+
+  .fire {
+    width: 1200px;
+    height: 50px;
+    background-image: url(./boss/fire-pixel.gif);
+    background-size: contain;
+    position: absolute;
+    bottom: 80px;
+    z-index: 9;
+    left: 0px;
+    transition: opacity 1000ms;
+  }
+
+  .timer {
+    transition: color 400ms;
+    position: absolute;
+    z-index: 111;
+    color: white;
+    top: 20px;
+    left: 440px;
+    font-size: 12px;
+
+    &.yellow {
+      color: yellow;
+    }
+
+    &.green {
+      color: green;
+    }
+  }
+
+  .hearts {
+    display: block;
+    position: absolute;
+    color: white;
+    top: 20px;
+    left: 860px;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    height: 18px;
+
+    .is-medium {
+      transform: scale(2) !important;
+      position: relative;
+      top: 5px;
+    }
+  }
+}
+
+.bg {
+  width: 100%;
+  height: 100%;
+  z-index: 999;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: black;
+  opacity: 0;
+  transition: opacity 1000ms;
+}
+
+.sun {
+  background-image: url("./level3/sun.gif");
+  background-size: contain;
+  background-repeat: no-repeat;
+  position: absolute;
+  width: 200px;
+  height: 200px;
+  transition: transform 800ms;
+  transform: translate(-200px, 0);
+}
+
+.congrats {
+  background-image: url("./level3/final.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  position: absolute;
+  width: 600px;
+  height: 100px;
+  transition: transform 800ms;
+  right: 100px;
+  top: 20px;
+  transform: scale(0);
+}
+
+.thanks {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  left: 0;
+  font-size: 14px;
+  background: black;
+  padding: 80px;
+  z-index: 99;
+  color: white;
+  opacity: 0;
+  transition: opacity 800ms;
+}
+
+.shieldAbility {
+  position: absolute;
+  right: 16px;
+  bottom: 10px;
+  background-image: url("./level3/help.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  width: 100px;
+  height: 60px;
+  opacity: 0.8;
+  z-index: 99999;
+
+  &.pending {
+    animation: shieldPending 1000ms infinite;
+  }
+
+  &.active {
+    animation: none;
+    transform: scale(1.2);
+    opacity: 1;
+  }
+
+  &.deactivated {
+    animation: none;
+    transform: scale(1);
+    opacity: 0.8;
+    filter: grayscale(1);
+  }
+}
+
+@keyframes shieldPending {
+  0% {
+    transform: scale(1)
+  }
+
+  50% {
+    transform: scale(1.2);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+.help-container {
+  transform: scale(0);
+  transition: transform 1200ms;
+  position: absolute;
+  transform-origin: 100% 100%;
+  overflow: hidden;
+
+  &.show {
+    transform: scale(1);
+  }
+
+  &.fade {
+    transform: scale(0);
+  }
+
+  &.ira {
+    background-image: url("./level3/help/ira.png");
+    width: 500px;
+    height: 300px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    top: 288px;
+    right: 0;
+    opacity: 0.8;
+  }
+
+  &.polina {
+    background-image: url("./level3/help/polina.png");
+    width: 500px;
+    height: 300px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    top: 288px;
+    right: 0;
+    opacity: 0.8;
+    z-index: 9;
+  }
+
+  &.bogdanchik {
+    background-image: url("./level3/help/bogi.png");
+    width: 500px;
+    height: 300px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    top: 300px;
+    right: 0;
+    opacity: 0.8;
+  }
+
+  &.stas {
+    background-image: url("./level3/help/stas.png");
+    width: 500px;
+    height: 300px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    top: 300px;
+    right: 0;
+    opacity: 0.8;
+  }
+
+  &.andrew {
+    background-image: url("./level3/help/ermakov.png");
+    width: 500px;
+    height: 300px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    top: 280px;
+    right: 0;
+    opacity: 0.8;
+    z-index: 99;
+
+    &::after {
+      content: "";
+      background-image: url("./level3/help/ermakov-fb.gif");
+      background-size: contain;
+      background-repeat: no-repeat;
+      position: absolute;
+      width: 215px;
+      left: 53px;
+      top: 32px;
+      height: 100%;
+    }
+  }
+
+  &.vacation {
+    width: 500px;
+    height: 300px;
+    top: 40%;
+    left: 40%;
+    z-index: 9;
+    transform-origin: 50% 50%;
+    font-size: 35px;
+    color: white;
+
+    &::after {
+      content: "Отпуск!";
+    }
+  }
+
+  &.wednesday {
+    width: 100%;
+    height: 100%;
+    background-size: contain;
+    background-repeat: no-repeat;
+    top: 0;
+    right: 0;
+    opacity: 0.8;
+    background-color: rgba(0, 0, 0, 0.5);
+    transition: transform 800ms, background-image 400ms;
+    z-index: 99999;
+    transform-origin: 50% 50%;
+    background-position: 50% 50%;
+
+    &::after {
+      content: "It's Wednesday!";
+      color: white;
+      font-size: 40px;
+      position: absolute;
+      top: 40%;
+      left: 25%;
+    }
+
+    @for $i from 1 through 10 {
+      &.wednesday-#{$i} {
+        background-image: url(./level3/wednesday/#{$i}.jpg);
+
+        &::after {
+          content: "";
+        }
+      }
+    }
+  }
+}
+
+.fireball.ira::before {
+  background-image: url("./level3/help/ira-fb.png");
+  background-size: contain;
+  animation: unset;
+}
+
+.fireball.stas::before {
+  background-image: url("./level3/help/stas-fb.png");
+  background-size: contain;
+  animation: unset;
+}
+
+.fireball.polina::before {
+  background-image: url("./level3/help/polina-fb.png");
+  background-size: contain;
+  animation: unset;
+  width: 100px;
+  height: 100px;
+}
+
+.fireball.andrew::before {
+  background-image: unset;
+  animation: unset;
+  width: 100px;
+  height: 100px;
+}
+
+.fireball.andrew::after {
+  content: "В следующий релиз";
+  display: block;
+  color: white;
+  text-align: center;
+}
+
+.fireball.bogdanchik::before {
+  background-image: url("./leads/bogi.png");
+  background-size: contain;
+  animation: unset;
+}

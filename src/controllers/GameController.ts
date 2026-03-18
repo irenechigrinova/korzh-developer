@@ -1,14 +1,15 @@
 import { Level as LevelBase } from '@/base/Level';
 import { CallLead } from '@/controllers/abilities/CallLead';
+import { Shield } from '@/controllers/abilities/Shield';
+import { Cloud } from '@/controllers/enemies/Cloud';
 import { Deadline } from '@/controllers/enemies/Deadline';
 import { AgeCheck } from '@/controllers/levels/AgeCheck';
 import { Intro } from '@/controllers/levels/Intro';
 import { Level1 } from '@/controllers/levels/Level1';
 import { Level2 } from '@/controllers/levels/Level2';
 import { Level3 } from '@/controllers/levels/Level3';
-import { Outro } from '@/controllers/levels/Outro';
 import { Player } from '@/controllers/player/Player';
-import { TLevel, ILevel } from '@/types';
+import { TLevel } from '@/types';
 
 export class GameController {
   private state: {
@@ -16,6 +17,7 @@ export class GameController {
     levels: TLevel[];
     curLevel: null | LevelBase;
     score: number;
+    initialScore: number;
     playerLevel: 'middle' | 'senior';
     paused: boolean;
   };
@@ -25,16 +27,26 @@ export class GameController {
     '3': Level3,
     '18+': AgeCheck,
     intro: Intro,
-    outro: Outro,
   };
   private player: Player | null;
   private reqAnimationFrameId: number;
   private callLeadAbility: CallLead | null;
+  private shield: Shield | null;
 
   private nextLevel() {
+    if (this.state.curLevel?.name === '3') {
+      this.shield?.destroy();
+      return;
+    }
     const idx = this.state.levelIdx + 1;
     this.state.levelIdx = idx;
     this.setLevel(this.state.levels[idx]);
+    if (this.state.levels[idx] === '3') {
+      this.state.initialScore = this.state.score;
+      setTimeout(() => {
+        this.shield?.init();
+      }, 7000);
+    }
   }
 
   private getPlayerLevel() {
@@ -63,20 +75,26 @@ export class GameController {
 
   private setScore(num: number) {
     this.state.score += num;
-    if (
-      this.state.score >= 1000 &&
-      this.state.playerLevel === 'middle' &&
-      this.player
-    ) {
-      this.state.playerLevel = 'senior';
-      this.player.updateLevel();
-      if (!this.callLeadAbility) {
-        this.callLeadAbility = new CallLead(
-          this.state.curLevel as LevelBase,
-          (isOn: boolean) => this.handleFatality(isOn),
-        );
+    if (this.state.curLevel?.name !== '3') {
+      if (
+        this.state.score >= 1000 &&
+        this.state.playerLevel === 'middle' &&
+        this.player
+      ) {
+        this.state.playerLevel = 'senior';
+        this.player.updateLevel();
+        if (!this.callLeadAbility) {
+          this.callLeadAbility = new CallLead(
+            this.state.curLevel as LevelBase,
+            (isOn: boolean) => this.handleFatality(isOn),
+          );
+        }
+        this.callLeadAbility.init();
       }
-      this.callLeadAbility.init();
+    } else {
+      if (this.state.score <= 0) {
+        this.shield?.deactivate();
+      }
     }
 
     this.renderScore();
@@ -115,10 +133,13 @@ export class GameController {
     this.state.paused = true;
     this.state.curLevel?.getObstacles()?.forEach((item) => item.deactivate());
     this.state.curLevel?.getEnemies()?.forEach((item) => {
-      if (item instanceof Deadline) {
+      if (item instanceof Deadline || item instanceof Cloud) {
         item.deactivate();
       }
     });
+    if (this.state.curLevel?.name === '3') {
+      clearInterval(this.state.curLevel?.timer);
+    }
     const div = document.createElement('div');
     div.className = 'dialog-container';
     div.innerHTML = `
@@ -144,6 +165,9 @@ export class GameController {
         this.callLeadAbility?.destroy();
         this.state.curLevel?.destroy();
         this.state.curLevel?.restart?.();
+        if (this.state.curLevel?.name === '3') {
+          this.state.score = this.state.initialScore;
+        }
         this.player = new Player(
           this.state.curLevel as LevelBase,
           () => this.getPlayerLevel(),
@@ -178,7 +202,7 @@ export class GameController {
     if (!Component) return;
 
     const start = () => {
-      if (['1', '2'].includes(name)) {
+      if (['1', '2', '3'].includes(name)) {
         this.player?.destroy();
         document.querySelector('#player')?.remove();
         this.player = new Player(
@@ -197,7 +221,15 @@ export class GameController {
 
       this.player?.init();
 
-      if (['1', '2'].includes(name)) {
+      if (this.state.curLevel?.name === '3') {
+        this.shield = new Shield(
+          (val) => this.player!.manageShield(val),
+          this.state.curLevel!,
+          (isOn: boolean) => this.handleFatality(isOn),
+        );
+      }
+
+      if (['1', '2', '3'].includes(name)) {
         if (!document.querySelector('.score')) {
           const div = document.createElement('div');
           div.className = 'score';
@@ -236,15 +268,17 @@ export class GameController {
   constructor() {
     this.state = {
       curLevel: null,
+      initialScore: 10000,
       levelIdx: 0,
-      levels: ['18+', 'intro', '1', '2', '3', 'outro'],
+      levels: ['18+', 'intro', '1', '2', '3'],
       paused: false,
       playerLevel: 'middle',
-      score: 0,
+      score: 10000,
     };
     this.player = null;
     this.reqAnimationFrameId = 0;
     this.callLeadAbility = null;
+    this.shield = null;
   }
 
   private handleTick() {
@@ -293,10 +327,13 @@ export class GameController {
     `;
     document.querySelector('.body-loading')!.appendChild(div);
 
-    this.state.levelIdx = idx;
-    this.setLevel(this.state.levels[idx]);
-    //this.state.levelIdx = 3;
-    //this.setLevel(this.state.levels[3]);
+    //this.state.levelIdx = idx;
+    //this.setLevel(this.state.levels[idx]);
+    this.state.levelIdx = 4;
+    this.setLevel(this.state.levels[4]);
     this.handleTick();
+    setTimeout(() => {
+      this.shield?.init();
+    }, 7000);
   }
 }

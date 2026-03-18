@@ -4,6 +4,7 @@ import { Movement } from '@/base/Movement';
 import { getObstacleCoords } from '@/base/utils';
 import { POSITION_CONFIG } from '@/base/utils';
 import { Boss } from '@/controllers/enemies/Boss';
+import { Cloud } from '@/controllers/enemies/Cloud';
 import { Deadline } from '@/controllers/enemies/Deadline';
 import { TMovementType } from '@/types';
 
@@ -68,7 +69,7 @@ export class Fireball extends Movement {
 
     const enemies = this.level?.getEnemies?.() ?? [];
     const enemy = enemies.find((enemy) => {
-      if (enemy instanceof Boss) return false;
+      if (enemy instanceof Boss || enemy instanceof Cloud) return false;
       if (enemy.state === 'destroyed' || enemy.state === 'pending')
         return false;
 

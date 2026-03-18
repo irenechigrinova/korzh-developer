@@ -169,6 +169,11 @@ export class Deadline {
       (this.node!.querySelector('.boom') as HTMLDivElement)!.classList.add(
         'animated',
       );
+      this.level.score(5000);
+
+      setTimeout(() => {
+        this.level?.fade();
+      }, 4200);
     }
   }
 

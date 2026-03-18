@@ -479,7 +479,8 @@
   transition: height 200ms;
 }
 
-.deadline .boom {
+.deadline .boom,
+.cloud .boom {
   background-image: url(./boss/boom.gif);
   background-size: contain;
   background-repeat: no-repeat;
@@ -489,7 +490,8 @@
   opacity: 0;
 }
 
-.deadline .boom.animated {
+.deadline .boom.animated,
+.cloud .boom.animated {
   opacity: 1;
   animation: deadlineBoom 100ms 1000ms forwards;
 }
@@ -624,5 +626,71 @@
 
 .fireball-b {
   background-image: url("./level2/fire-blue.gif");
+}
+
+.cloud {
+  position: absolute;
+  width: 350px;
+  height: 200px;
+  background-image: url("./level3/cloud.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: black;
+  font-size: 35px;
+  transform: scale(1);
+  top: 100px;
+  
+  &.left {
+    left: -400px;
+    transition: left 500ms;
+  }
+
+  &.right {
+    right: -400px;
+    transition: right 500ms;
+  }
+
+  &.center {
+    transition: opacity 500ms;
+    opacity: 0;
+  }
+}
+
+@keyframes cloud {
+  0% {
+    transform: scale(1);
+  }
+  25% {
+    transform: scale(1.1);
+  }
+  80% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.fireball-cloud {
+  &:after {
+    content: '';
+    display: none;
+  }
+}
+
+.cloud.destroyed {
+  animation: destroyedCloud 500ms ease-in 1000ms forwards !important;
+}
+
+@keyframes destroyedCloud {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(0);
+  }
 }
 

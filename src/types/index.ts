@@ -4,7 +4,7 @@ import { Obstacle } from '@/base/Obstacle';
 import { POSITION_CONFIG } from '@/base/utils';
 import { Boss } from '@/controllers/enemies/Boss';
 
-export type TLevel = '18+' | 'intro' | '1' | '2' | '3' | 'outro';
+export type TLevel = '18+' | 'intro' | '1' | '2' | '3';
 
 export type TObstacleType =
   | 'question'

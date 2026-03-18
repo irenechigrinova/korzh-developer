@@ -4,6 +4,7 @@ import { Level } from '@/base/Level';
 import { Obstacle } from '@/base/Obstacle';
 import { POSITION_CONFIG, getObstacleCoords } from '@/base/utils';
 import { Boss } from '@/controllers/enemies/Boss';
+import { Cloud } from '@/controllers/enemies/Cloud';
 import { TMovementParams, TMovementType } from '@/types';
 
 export class Movement extends BaseScene {
@@ -370,7 +371,7 @@ export class Movement extends BaseScene {
     const { y } = intersected.getParams();
     const enemies = this.level?.getEnemies?.() ?? [];
     const enemy = enemies.find((item) => {
-      if (item instanceof Boss) return false;
+      if (item instanceof Boss || item instanceof Cloud) return false;
       const xIntersection = this.getXIntersection(
         intersected,
         item.left,

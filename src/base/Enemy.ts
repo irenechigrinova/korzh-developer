@@ -90,12 +90,7 @@ export class Enemy extends Movement {
       return;
     }
 
-    this.state = 'destroyed';
-    this.node.classList.add('destroyed');
-    setTimeout(() => {
-      this.node!.remove();
-      this.level.removeEnemy?.(this.getId());
-    }, 1000);
+    this.die();
   }
 
   explode(): void {

@@ -2,6 +2,7 @@ import { BaseScene } from '@/base/BaseScene';
 import { Enemy } from '@/base/Enemy';
 import { Obstacle } from '@/base/Obstacle';
 import { Boss } from '@/controllers/enemies/Boss';
+import { Cloud } from '@/controllers/enemies/Cloud';
 import { Deadline } from '@/controllers/enemies/Deadline';
 import { TBoss, TLevel } from '@/types';
 
@@ -9,12 +10,13 @@ export class Level extends BaseScene {
   private bgOffset: number;
   private bgOffsetLast: number;
   private obstacles: Record<number, Obstacle[]>;
-  private enemies: Record<number, (Enemy | Boss | Deadline)[]>;
+  private enemies: Record<number, (Enemy | Boss | Deadline | Cloud)[]>;
   private onChangeScene: (destroyAbility?: boolean) => void;
   private isBossIntro: boolean;
   private bossesShown: TBoss[];
   public startLevel: () => void;
   public getPlayerPosition: () => Record<string, any>;
+  public timer: number;
   private prepareObstacles: (
     remove: (id: string) => void,
     getPlayerPosition: () => Record<string, any>,
@@ -22,7 +24,7 @@ export class Level extends BaseScene {
   ) => Record<number, Obstacle[]>;
   private prepareEnemies: (
     level: Level,
-  ) => Record<number, (Enemy | Boss | Deadline)[]>;
+  ) => Record<number, (Enemy | Boss | Deadline | Cloud)[]>;
   private hitPlayer: (full?: boolean) => void;
 
   score: (num: number) => void;
@@ -82,7 +84,7 @@ export class Level extends BaseScene {
     ) => Record<number, Obstacle[]>;
     prepareEnemies: (
       level: Level,
-    ) => Record<number, (Enemy | Boss | Deadline)[]>;
+    ) => Record<number, (Enemy | Boss | Deadline | Cloud)[]>;
     getPlayerPosition: () => Record<string, any>;
     hitPlayer: () => void;
   }) {
@@ -108,6 +110,7 @@ export class Level extends BaseScene {
     );
     this.enemies = params.prepareEnemies(this);
     this.isBossScene = false;
+    this.timer = 0;
   }
 
   init() {}
@@ -139,7 +142,11 @@ export class Level extends BaseScene {
     (this.node!.querySelector(
       '.game-body',
     ) as HTMLDivElement)!.style.backgroundPosition = `${this.bgOffset}px 0`;
-    this.obstacles[bgOffset]?.forEach((item) => item.deactivate());
+    this.obstacles[bgOffset]?.forEach((item) => {
+      if (item.getParams().type.includes('client')) {
+        item.deactivate();
+      }
+    });
     this.drawObstacles();
     this.drawEnemies();
   }
@@ -207,7 +214,10 @@ export class Level extends BaseScene {
 
   public onTick() {
     (this.enemies[this.bgOffset] ?? []).forEach((enemy) => {
-      const isBoss = enemy instanceof Boss || enemy instanceof Deadline;
+      const isBoss =
+        enemy instanceof Boss ||
+        enemy instanceof Deadline ||
+        enemy instanceof Cloud;
       if (!isBoss) {
         if (enemy.state === 'active') {
           enemy.setLeft();
@@ -243,11 +253,16 @@ export class Level extends BaseScene {
     div.className = 'enemies';
     document.querySelector('.game-body')?.append(div);
 
+    if (this.name === '3') {
+      document.querySelectorAll('.heart').forEach((item) => {
+        item.classList.remove('is-transparent');
+      });
+    }
+
     const offset = this.bgOffset;
     this.isBossScene = false;
     this.isBossIntro = false;
     this.bgOffset = 0;
-    this.setStyles(offset);
     this.enemies = this.prepareEnemies(this);
     this.obstacles = this.prepareObstacles(
       this.removeObstacle.bind(this),
@@ -255,8 +270,7 @@ export class Level extends BaseScene {
       this.hitPlayer.bind(this),
     );
     this.bossesShown = [];
-    this.drawObstacles();
-    this.drawEnemies();
+    this.setStyles(offset);
 
     (document.querySelector(
       '#boss-appearance-audio',
@@ -273,5 +287,14 @@ export class Level extends BaseScene {
     if (full) {
       this.node?.remove();
     }
+  }
+
+  public fade() {
+    if (!this.node) return;
+    this.node.style.transition = 'opacity 1500ms';
+    this.node.style.opacity = '0';
+    setTimeout(() => {
+      this.nextLevel();
+    }, 1600);
   }
 }

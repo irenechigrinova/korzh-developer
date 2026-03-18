@@ -5,6 +5,7 @@ import '../../styles/player.style.scss';
 import { Movement } from '@/base/Movement';
 import { POSITION_CONFIG } from '@/base/utils';
 import { Boss } from '@/controllers/enemies/Boss';
+import { Cloud } from '@/controllers/enemies/Cloud';
 import { Fireball } from '@/controllers/player/Fireball';
 
 export class Player extends Movement {
@@ -20,6 +21,10 @@ export class Player extends Movement {
   private onDie: () => void;
 
   private levelChanging: boolean;
+  private keysPressed: string[];
+
+  private lives: number;
+  private shieldActive: boolean;
 
   private die() {
     if (!this.playerNode) return;
@@ -33,7 +38,9 @@ export class Player extends Movement {
       item.node?.remove();
     });
     this.fireballs = [];
-    this.onDie();
+    setTimeout(() => {
+      this.onDie();
+    }, 1000);
   }
 
   constructor(
@@ -50,7 +57,7 @@ export class Player extends Movement {
       {
         bottom: level.name === '2' ? 241 : 0,
         height: 120,
-        left: 0,
+        left: level.name === '3' ? 562 : 0,
         moveDirection: 'right',
         speed: 5,
         width: 77,
@@ -66,6 +73,9 @@ export class Player extends Movement {
     this.downgrade = downgrade;
     this.levelChanging = false;
     this.onDie = onDie;
+    this.keysPressed = [];
+    this.lives = 5;
+    this.shieldActive = false;
   }
 
   private setStyles() {
@@ -93,6 +103,8 @@ export class Player extends Movement {
   private handleKeyboardDown(e: KeyboardEvent) {
     if (!this.watch) return;
 
+    this.keysPressed.push(e.code);
+
     if (
       e.code === 'ArrowRight' ||
       e.code === 'KeyD' ||
@@ -110,17 +122,19 @@ export class Player extends Movement {
 
   private handleKeyboardUp(e: KeyboardEvent) {
     if (!this.watch) return;
+    this.keysPressed = this.keysPressed.filter((key) => key !== e.code);
 
     if (
-      e.code === 'ArrowRight' ||
-      e.code === 'KeyD' ||
-      e.code === 'ArrowLeft' ||
-      e.code === 'KeyA'
+      !this.keysPressed.length &&
+      (e.code === 'ArrowRight' ||
+        e.code === 'KeyD' ||
+        e.code === 'ArrowLeft' ||
+        e.code === 'KeyA')
     ) {
       this.isMoving = false;
       this.setStyles();
     }
-    if (e.code === 'Space' && !this.fireDelay) {
+    if (e.code === 'Space' && !this.fireDelay && this.level.name !== '3') {
       const fireball = new Fireball(
         this.level,
         this.getMyLevel,
@@ -161,6 +175,13 @@ export class Player extends Movement {
         this.endLevelAnimation();
       }
     }
+    if (
+      this.level.name === '3' &&
+      this.left >= 1117 &&
+      this.moveDirection === 'right'
+    ) {
+      this.left = 1117;
+    }
 
     this.setStyles();
   }
@@ -180,25 +201,39 @@ export class Player extends Movement {
   }
 
   public getDamage(full?: boolean) {
-    if (full) {
-      this.die();
-    }
-    if (this.getMyLevel() === 'middle') {
-      this.die();
+    if (this.level.name !== '3') {
+      if (full) {
+        this.die();
+      }
+      if (this.getMyLevel() === 'middle') {
+        this.die();
+      } else {
+        this.levelChanging = true;
+        this.downgrade();
+        this.updateLevel();
+      }
     } else {
-      this.levelChanging = true;
-      this.downgrade();
-      this.updateLevel();
+      this.lives -= 1;
+      const hearts = Array.from(document.querySelectorAll('.heart')!);
+      hearts[this.lives].classList.add('is-transparent');
+      if (this.lives === 0) {
+        this.die();
+      } else {
+        this.playerNode?.classList.add('damaged');
+        setTimeout(() => {
+          this.playerNode?.classList.remove('damaged');
+        }, 900);
+      }
     }
   }
 
   private checkEnemyCollision() {
-    if (this.levelChanging) return;
+    if (this.levelChanging || this.shieldActive) return;
 
     const enemies = this.level.getEnemies?.() ?? [];
     for (let i = 0; i < enemies.length; i += 1) {
       const enemy = enemies[i];
-      if (enemy instanceof Boss) continue;
+      if (enemy instanceof Boss || enemy instanceof Cloud) continue;
       if (enemy.state === 'destroyed' || enemy.state === 'pending') continue;
 
       const { top } = POSITION_CONFIG.player;
@@ -211,14 +246,17 @@ export class Player extends Movement {
         (playerTopLeft[0] <= enemy.left + enemy.width &&
           playerTopRight[0] >= enemy.left + enemy.width);
       let conditionVertical = Math.abs(enemy.bottom - this.bottom) <= 10;
+      const myHeight = this.bottom + 115;
+
       if (enemy.type === 'fireball-g' || enemy.type === 'fireball-b') {
-        const myHeight = this.bottom + 115;
         conditionVertical =
           (enemy.bottom >= this.bottom &&
             enemy.bottom + enemy.height <= myHeight) ||
           (enemy.bottom < this.bottom &&
             enemy.bottom + enemy.height >= this.bottom) ||
           (enemy.bottom < myHeight && enemy.bottom + enemy.height > myHeight);
+      } else if (enemy.type === 'fireball' && this.level.name === '3') {
+        conditionVertical = enemy.bottom <= 100;
       }
       if (conditionHorizontal && conditionVertical) {
         if (enemy.type === 'sq') {
@@ -232,6 +270,9 @@ export class Player extends Movement {
           }
         } else {
           this.getDamage();
+          if (enemy.type === 'fireball') {
+            enemy.dieHard();
+          }
         }
         break;
       }
@@ -257,6 +298,10 @@ export class Player extends Movement {
     this.playerNode.id = 'player';
     this.playerNode.classList.add(this.getMyLevel());
     this.playerNode.classList.add('idle');
+    if (this.level.name === '3') {
+      this.playerNode.innerHTML = '<div class="shield"></div>';
+    }
+
     this.setStyles();
 
     document.querySelector('section .game-body')?.appendChild(this.playerNode);
@@ -304,5 +349,17 @@ export class Player extends Movement {
       moveDirection: this.moveDirection,
       width: this.width,
     };
+  }
+
+  public manageShield(val: boolean) {
+    if (!this.playerNode) return;
+
+    this.shieldActive = val;
+    const shield = this.playerNode.querySelector('.shield') as HTMLDivElement;
+    if (val) {
+      shield.style.display = 'block';
+    } else {
+      shield.style.display = 'none';
+    }
   }
 }

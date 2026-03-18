@@ -2,6 +2,7 @@ import { Enemy } from '@/base/Enemy';
 import { Level } from '@/base/Level';
 import { Boss } from '@/controllers/enemies/Boss';
 import { Bug } from '@/controllers/enemies/Bug';
+import { Cloud } from '@/controllers/enemies/Cloud';
 
 export class CallLead {
   private leads: {
@@ -166,7 +167,7 @@ export class CallLead {
     if (lead.name !== 'igor') {
       setTimeout(() => {
         const enemies = (this.level.getEnemies?.() ?? []).filter(
-          (item) => !(item instanceof Boss) && item.state === 'active',
+          (item) => !(item instanceof Boss || item instanceof Cloud) && item.state === 'active',
         );
         enemies.forEach((enemy) => (enemy as Enemy).explode());
       }, 1000);

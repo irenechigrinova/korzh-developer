@@ -190,6 +190,28 @@
   }
 }
 
+.damaged {
+  animation: damaged 800ms forwards !important;
+}
+
+@keyframes damaged {
+  0%, 30% {
+    opacity: 1;
+  }
+  40% {
+    opacity: 0.1;
+  }
+  60% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 0.1;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
 @keyframes toMiddle {
   0%, 30% {
     background-image: url('senior-sprite-2.png');
@@ -234,5 +256,64 @@
   }
   to {
     background-position: 77px 6px;
+  }
+}
+
+
+.shield {
+  width: 100px;
+  height: 120px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #00ffff 5%, #002b36 60%, #000 100%);
+  box-shadow:
+    0 0 20px #0ff,
+    0 0 40px #0ff,
+    0 0 60px #0ff,
+    inset 0 0 30px #0ff;
+
+  position: relative;
+  opacity: 0.5;
+  left: -10px;
+  display: none;
+
+  &:after {
+    content: "";
+    position: absolute;
+    top: 15%;
+    left: 15%;
+    width: 70%;
+    height: 70%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.3), transparent 70%);
+    border-radius: 50%;
+    filter: blur(8px);
+    animation: shimmer 6s ease-in-out infinite;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow:
+      0 0 20px #0ff,
+      0 0 40px #0ff,
+      0 0 60px #0ff,
+      inset 0 0 30px #0ff;
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow:
+      0 0 30px #0ff,
+      0 0 60px #0ff,
+      0 0 90px #0ff,
+      inset 0 0 40px #0ff;
+  }
+}
+
+@keyframes shimmer {
+  0%, 100% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(10px, 10px);
   }
 }
