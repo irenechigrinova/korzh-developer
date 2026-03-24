@@ -72,6 +72,8 @@ export class Level3 extends Level {
             '.game-body',
           ) as HTMLDivElement)!.style.backgroundImage =
             'url("./level3/level3-finish.png")';
+          (document.querySelector('#final-audio') as HTMLAudioElement).pause();
+          (document.querySelector('#win-audio') as HTMLAudioElement).play();
         }, 2000);
         setTimeout(() => {
           (document.querySelector('.sun') as HTMLDivElement)!.style.transform =
@@ -86,7 +88,12 @@ export class Level3 extends Level {
         setTimeout(() => {
           (document.querySelector('.thanks') as HTMLDivElement)!.style.opacity =
             '1';
-        }, 5500);
+        }, 6200);
+        setTimeout(() => {
+          (document.querySelector(
+            '.thanks img',
+          ) as HTMLImageElement)!.style.opacity = '1';
+        }, 6800);
       }
       const timer = document.querySelector('.timer')!;
       const bg = document.querySelector('.bg')! as HTMLDivElement;
@@ -139,10 +146,12 @@ export class Level3 extends Level {
           <div class="thanks">
             <p>Благодарности</p>
             <p>Прежде всего, хочу поблагодарить своего супруга, который постоянно говорил мне, как надо делать, а как не надо.</p>
-            <p>Отдельной благодарности заслуживает мой личный штат тестировщиков - Полина, Серёжа и Ваня. Эти люди прошли игру больше раз, чем я при разработке. Они нашли баги, которые меня потом преследовали в кошмарах (если найдёте ещё баг, пожалуйста, просто скажите, что это фича).</p>
+            <p>Отдельной благодарности заслуживает мой личный штат тестировщиков - Полина и Серёжа, а также мой бывший студент (который уже совсем не студент, а ого-го разработчик) Ваня. Эти люди прошли игру больше раз, чем я при разработке. Они нашли баги, которые меня потом преследовали в кошмарах (если найдёте ещё баг, пожалуйста, просто скажите, что это фича).</p>
             <p>Полине также спасибо за её прекрасные идеи, без них Корж-Девелопер не был бы таким крутым.</p>
             <p>Спасибо Андрею за его веру, что я доделаю Коржа (я уже сама не была в этом уверена).</p>
             <p>Спасибо всем, кто дошёл до конца и подписал-таки релиз.</p>
+            <p>И, конечно, отдельное спасибо главному <br/> идейному вдохновителю Кексу!</p>
+            <img src="./level3/keks.jpeg" alt="Keks" />
           </div>
         </div>`;
 
@@ -157,9 +166,17 @@ export class Level3 extends Level {
       this.startTimer();
     }, 7000);
 
-    (document.querySelector('#main-audio') as HTMLAudioElement)!.pause();
-    (document.querySelector('#main-audio') as HTMLAudioElement)!.currentTime =
-      0;
-    (document.querySelector('#final-audio') as HTMLAudioElement)!.play();
+    const runAudio = () => {
+      if (navigator.userActivation.hasBeenActive) {
+        (document.querySelector('#main-audio') as HTMLAudioElement)!.pause();
+        (document.querySelector(
+          '#main-audio',
+        ) as HTMLAudioElement)!.currentTime = 0;
+        (document.querySelector('#final-audio') as HTMLAudioElement)!.play();
+      } else {
+        setTimeout(() => runAudio(), 200);
+      }
+    };
+    runAudio();
   }
 }

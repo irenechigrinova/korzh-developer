@@ -30,6 +30,7 @@ export class Level extends BaseScene {
   score: (num: number) => void;
   name: TLevel;
   isBossScene: boolean;
+  isPaused: boolean;
 
   private removeObstacle(id: string) {
     this.obstacles = {
@@ -100,6 +101,7 @@ export class Level extends BaseScene {
     this.startLevel = params.startLevel;
     this.getPlayerPosition = params.getPlayerPosition;
     this.hitPlayer = params.hitPlayer;
+    this.isPaused = false;
 
     this.prepareEnemies = params.prepareEnemies;
     this.prepareObstacles = params.prepareObstacles;
@@ -264,6 +266,7 @@ export class Level extends BaseScene {
     this.isBossIntro = false;
     this.bgOffset = 0;
     this.enemies = this.prepareEnemies(this);
+    this.isPaused = false;
     this.obstacles = this.prepareObstacles(
       this.removeObstacle.bind(this),
       this.getPlayerPosition.bind(this),
@@ -278,7 +281,9 @@ export class Level extends BaseScene {
     (document.querySelector(
       '#boss-appearance-audio',
     ) as HTMLAudioElement)!.currentTime = 0;
-    (document.querySelector('#main-audio') as HTMLAudioElement)!.play();
+    if (this.name !== '3') {
+      (document.querySelector('#main-audio') as HTMLAudioElement)!.play();
+    }
   }
 
   public destroy(full?: boolean): void {

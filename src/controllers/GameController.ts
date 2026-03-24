@@ -131,6 +131,7 @@ export class GameController {
 
   private playerDead() {
     this.state.paused = true;
+    this.state.curLevel!.isPaused = true;
     this.state.curLevel?.getObstacles()?.forEach((item) => item.deactivate());
     this.state.curLevel?.getEnemies()?.forEach((item) => {
       if (item instanceof Deadline || item instanceof Cloud) {
@@ -223,7 +224,12 @@ export class GameController {
 
       if (this.state.curLevel?.name === '3') {
         this.shield = new Shield(
-          (val) => this.player!.manageShield(val),
+          (val, help) => {
+            this.player!.manageShield(val);
+            if (help === 'vacation') {
+              this.player!.getDamage(true);
+            }
+          },
           this.state.curLevel!,
           (isOn: boolean) => this.handleFatality(isOn),
         );
@@ -290,6 +296,12 @@ export class GameController {
         if (this.state.curLevel) {
           this.state.curLevel.onTick?.();
         }
+      } else {
+        if (this.state.curLevel?.name === '3') {
+          if (this.player) {
+            this.player.onTick();
+          }
+        }
       }
 
       this.handleTick();
@@ -329,8 +341,8 @@ export class GameController {
 
     //this.state.levelIdx = idx;
     //this.setLevel(this.state.levels[idx]);
-    this.state.levelIdx = 2;
-    this.setLevel(this.state.levels[2]);
+    this.state.levelIdx = 4;
+    this.setLevel(this.state.levels[4]);
     this.handleTick();
     setTimeout(() => {
       this.shield?.init();

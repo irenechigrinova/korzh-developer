@@ -122,7 +122,6 @@ export class Cloud {
   }
 
   toggleFire(val: boolean) {
-    console.log('toggle', val);
     this.canFire = val;
   }
 
@@ -135,7 +134,11 @@ export class Cloud {
   }
 
   fire() {
-    if (this.behaviour !== 'polina' && this.behaviour !== 'andrew' && this.canFire) {
+    if (
+      this.behaviour !== 'polina' &&
+      this.behaviour !== 'andrew' &&
+      this.canFire
+    ) {
       const width = this.left + 350;
       let left = Math.random() * (width - this.left) + this.left;
       if (this.position === 'right') {

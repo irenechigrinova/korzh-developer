@@ -216,16 +216,23 @@ export class Player extends Movement {
         this.updateLevel();
       }
     } else {
-      this.lives -= 1;
       const hearts = Array.from(document.querySelectorAll('.heart')!);
-      hearts[this.lives].classList.add('is-transparent');
-      if (this.lives === 0) {
-        this.die();
+      if (full) {
+        if (this.lives < 5) {
+          this.lives += 1;
+          hearts[this.lives - 1].classList.remove('is-transparent');
+        }
       } else {
-        this.playerNode?.classList.add('damaged');
-        setTimeout(() => {
-          this.playerNode?.classList.remove('damaged');
-        }, 900);
+        this.lives -= 1;
+        hearts[this.lives].classList.add('is-transparent');
+        if (this.lives === 0) {
+          this.die();
+        } else {
+          this.playerNode?.classList.add('damaged');
+          setTimeout(() => {
+            this.playerNode?.classList.remove('damaged');
+          }, 900);
+        }
       }
     }
   }
@@ -272,7 +279,12 @@ export class Player extends Movement {
             this.getDamage();
           }
         } else {
-          this.getDamage();
+          if (
+            !(enemy as any).behaviour ||
+            (enemy as any).behaviour === 'classic'
+          ) {
+            this.getDamage();
+          }
           if (enemy.type === 'fireball') {
             enemy.dieHard();
           }

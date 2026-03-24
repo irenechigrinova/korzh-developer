@@ -164,6 +164,15 @@
   color: white;
   opacity: 0;
   transition: opacity 800ms;
+
+  img {
+    position: absolute;
+    right: 453px;
+    bottom: 0;
+    height: 150px;
+    opacity: 0;
+    transition: opacity 1000ms;
+  }
 }
 
 .shieldAbility {

@@ -4,13 +4,13 @@ import { Cloud } from '@/controllers/enemies/Cloud';
 export class Shield {
   private node: HTMLDivElement | null;
   private status: 'active' | 'pending' | 'deactivated';
-  private onManageShield: (val: boolean) => void;
+  private onManageShield: (val: boolean, help: string) => void;
   private level: Level;
   private helps: string[];
   private curHelp: number;
   private handlePause;
   constructor(
-    manageShield: (val: boolean) => void,
+    manageShield: (val: boolean, help: string) => void,
     level: Level,
     onPause: (val: boolean) => void,
   ) {
@@ -112,12 +112,17 @@ export class Shield {
       this.helps[this.curHelp] === 'vacation' ||
       this.helps[this.curHelp] === 'stas'
     ) {
-      this.onManageShield(true);
+      this.onManageShield(true, this.helps[this.curHelp]);
     }
   }
 
   private handleKeyboard(e: KeyboardEvent) {
-    if (this.status === 'active' || this.status === 'deactivated' || !this.node)
+    if (
+      this.level.isPaused ||
+      this.status === 'active' ||
+      this.status === 'deactivated' ||
+      !this.node
+    )
       return;
 
     if (e.code === 'KeyH') {
@@ -133,7 +138,7 @@ export class Shield {
           this.curHelp + 1 > this.helps.length - 1 ? 0 : this.curHelp + 1;
         this.node!.classList.remove('active');
         this.node!.classList.add('pending');
-        this.onManageShield(false);
+        this.onManageShield(false, '');
         this.handlePause(false);
         document.querySelector('.help-container')?.classList.add('fade');
         this.level.getEnemies().forEach((item: any) => {
