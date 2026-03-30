@@ -27,7 +27,7 @@ export class Movement extends BaseScene {
 
   private bottomBaseline: number;
   private initialBottomBaseline: number;
-  private dieCallback: (() => void) | undefined;
+  private dieCallback: ((val?: boolean) => void) | undefined;
   private isEnemy: boolean;
 
   constructor(
@@ -321,7 +321,7 @@ export class Movement extends BaseScene {
         this.bottomBaseline === this.initialBottomBaseline
       ) {
         if (type === 'void') {
-          if (this.dieCallback) this.dieCallback();
+          if (this.dieCallback) this.dieCallback(true);
           return;
         }
         this.left = this.moveDirection === 'right' ? x - 70 : x + width;
@@ -372,7 +372,7 @@ export class Movement extends BaseScene {
             this.moveDirection === 'right' ? 'left' : 'right';
           return;
         }
-        if (this.dieCallback) this.dieCallback();
+        if (this.dieCallback) this.dieCallback(true);
       }
       let breakpoint = 0;
       if (intersected) {

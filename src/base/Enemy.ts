@@ -25,7 +25,10 @@ export class Enemy extends Movement {
       (num: number) => level.score(num),
       type,
       params,
-      () => this.fall(),
+      (val?: boolean) => {
+        if (val) this.fall();
+        else this.die();
+      },
     );
 
     this.level = level;
