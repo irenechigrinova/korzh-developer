@@ -255,12 +255,6 @@ export class Level extends BaseScene {
     div.className = 'enemies';
     document.querySelector('.game-body')?.append(div);
 
-    if (this.name === '3') {
-      document.querySelectorAll('.heart').forEach((item) => {
-        item.classList.remove('is-transparent');
-      });
-    }
-
     const offset = this.bgOffset;
     this.isBossScene = false;
     this.isBossIntro = false;

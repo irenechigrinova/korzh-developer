@@ -166,9 +166,6 @@ export class GameController {
         this.callLeadAbility?.destroy();
         this.state.curLevel?.destroy();
         this.state.curLevel?.restart?.();
-        if (this.state.curLevel?.name === '3') {
-          this.state.score = this.state.initialScore;
-        }
         this.player = new Player(
           this.state.curLevel as LevelBase,
           () => this.getPlayerLevel(),
@@ -182,6 +179,11 @@ export class GameController {
           () => this.playerDead(),
         );
         this.player.init();
+
+        if (this.state.curLevel?.name === '3') {
+          this.state.score = this.state.initialScore;
+          this.renderScore();
+        }
       }
     };
     document.body.appendChild(div);
@@ -339,10 +341,8 @@ export class GameController {
     `;
     document.querySelector('.body-loading')!.appendChild(div);
 
-    //this.state.levelIdx = idx;
-    //this.setLevel(this.state.levels[idx]);
-    this.state.levelIdx = 4;
-    this.setLevel(this.state.levels[4]);
+    this.state.levelIdx = idx;
+    this.setLevel(this.state.levels[idx]);
     this.handleTick();
     setTimeout(() => {
       this.shield?.init();

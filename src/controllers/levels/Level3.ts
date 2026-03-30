@@ -19,6 +19,7 @@ const prepareEnemies = (self: Level) => ({
 export class Level3 extends Level {
   public timer: number;
   private timeLeft: number;
+  private _restart: () => void;
   constructor(
     nextLevel: () => void,
     score: (num: number) => void,
@@ -39,6 +40,7 @@ export class Level3 extends Level {
       score,
       startLevel,
     });
+    this._restart = super.restart;
     this.timer = 0;
     this.timeLeft = 120;
   }
@@ -178,5 +180,21 @@ export class Level3 extends Level {
       }
     };
     runAudio();
+  }
+
+  public restart(): void {
+    this.timer = 0;
+    this.timeLeft = 120;
+    this.startTimer();
+    const timer = document.querySelector('.timer') as HTMLDivElement;
+    timer.innerHTML = `Осталось продержаться: ${this.timeLeft}`;
+    timer.className = 'timer';
+    (document.querySelector('.bg')! as HTMLDivElement).style.opacity = '0';
+
+    document.querySelectorAll('.heart').forEach((item) => {
+      item.classList.remove('is-transparent');
+    });
+
+    this._restart();
   }
 }

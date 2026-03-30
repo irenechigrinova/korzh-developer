@@ -288,6 +288,34 @@
     filter: blur(8px);
     animation: shimmer 6s ease-in-out infinite;
   }
+
+  &.active {
+    animation: shieldPulse 2000ms ease-in-out 3500ms forwards !important;
+  }
+}
+
+@keyframes shieldPulse {
+  0%, 20% {
+    opacity: 0.5;
+  }
+  30% {
+    opacity: 0.1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  70% {
+    opacity: 0.1;
+  }
+  80% {
+    opacity: 0.5;
+  }
+  90% {
+    opacity: 0.1;
+  }
+  100% {
+    opacity: 0.5;
+  }
 }
 
 @keyframes pulse {

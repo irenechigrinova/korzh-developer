@@ -266,7 +266,7 @@ export class Player extends Movement {
             enemy.bottom + enemy.height >= this.bottom) ||
           (enemy.bottom < myHeight && enemy.bottom + enemy.height > myHeight);
       } else if (enemy.type === 'fireball' && this.level.name === '3') {
-        conditionVertical = enemy.bottom <= 100;
+        conditionVertical = enemy.bottom <= this.bottom + 70;
       }
       if (conditionHorizontal && conditionVertical) {
         if (enemy.type === 'sq') {
@@ -373,8 +373,10 @@ export class Player extends Movement {
     const shield = this.playerNode.querySelector('.shield') as HTMLDivElement;
     if (val) {
       shield.style.display = 'block';
+      shield.classList.add('active');
     } else {
       shield.style.display = 'none';
+      shield.classList.remove('active');
     }
   }
 }
