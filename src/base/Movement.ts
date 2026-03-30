@@ -367,6 +367,11 @@ export class Movement extends BaseScene {
       bottom = this.type === 'player' ? bottom - 10 : bottom - 8;
       const intersected = this.getObstaclesDown(this.left, this.bottom);
       if (intersected && intersected.getParams().type === 'void') {
+        if (this.isEnemy && (this.type === 'sq' || this.type === 'task')) {
+          this.moveDirection =
+            this.moveDirection === 'right' ? 'left' : 'right';
+          return;
+        }
         if (this.dieCallback) this.dieCallback();
       }
       let breakpoint = 0;

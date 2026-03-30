@@ -694,3 +694,16 @@
   }
 }
 
+.fall {
+  animation: fall 800ms forwards !important;
+}
+
+@keyframes fall {
+  from {
+    bottom: 80px;
+  }
+  to {
+    bottom: -200px;
+  }
+}
+

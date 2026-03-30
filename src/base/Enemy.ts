@@ -25,7 +25,7 @@ export class Enemy extends Movement {
       (num: number) => level.score(num),
       type,
       params,
-      () => this.die(),
+      () => this.fall(),
     );
 
     this.level = level;
@@ -72,6 +72,14 @@ export class Enemy extends Movement {
     setTimeout(() => {
       this.node!.remove();
       this.level.removeEnemy?.(this.getId());
+    }, 1000);
+  }
+
+  fall() {
+    this.state = 'destroyed';
+    this.node?.classList.add('fall');
+    setTimeout(() => {
+      this.dieHard();
     }, 1000);
   }
 
