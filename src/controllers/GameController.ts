@@ -276,12 +276,12 @@ export class GameController {
   constructor() {
     this.state = {
       curLevel: null,
-      initialScore: 10000,
+      initialScore: 0,
       levelIdx: 0,
       levels: ['18+', 'intro', '1', '2', '3'],
       paused: false,
-      playerLevel: 'senior',
-      score: 10000,
+      playerLevel: 'middle',
+      score: 0,
     };
     this.player = null;
     this.reqAnimationFrameId = 0;

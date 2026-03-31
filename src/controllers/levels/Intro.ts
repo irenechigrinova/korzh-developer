@@ -135,7 +135,7 @@ export class Intro extends BaseScene {
 
   init() {
     const section = this.create();
-    section.classList.add('intro');
+    section.classList.add('intro-scene');
     section.innerHTML = `
       <div class="text-wrapper">
         <div class="text1">При поддержке мужа и Серпентария</div>
