@@ -9,10 +9,12 @@ export class Shield {
   private helps: string[];
   private curHelp: number;
   private handlePause;
+  private curScore: () => number;
   constructor(
     manageShield: (val: boolean, help: string) => void,
     level: Level,
     onPause: (val: boolean) => void,
+    getScore: () => number,
   ) {
     this.node = null;
     this.status = 'pending';
@@ -29,6 +31,7 @@ export class Shield {
     ];
     this.curHelp = 0;
     this.handlePause = onPause;
+    this.curScore = getScore;
   }
 
   private drawLightning() {
@@ -118,6 +121,7 @@ export class Shield {
 
   private handleKeyboard(e: KeyboardEvent) {
     if (
+      this.curScore() < 1000 ||
       this.level.isPaused ||
       this.status === 'active' ||
       this.status === 'deactivated' ||

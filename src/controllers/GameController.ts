@@ -141,9 +141,10 @@ export class GameController {
     if (this.state.curLevel?.name === '3') {
       clearInterval(this.state.curLevel?.timer);
     }
-    const div = document.createElement('div');
-    div.className = 'dialog-container';
-    div.innerHTML = `
+    setTimeout(() => {
+      const div = document.createElement('div');
+      div.className = 'dialog-container';
+      div.innerHTML = `
       <dialog class="nes-dialog is-rounded" id="dialog-rounded" open="">
         <form method="dialog" id="you-are-dead">
           ${this.renderDieItem()}
@@ -153,47 +154,49 @@ export class GameController {
         </form>
       </dialog>
     `;
-    const handleEnter = (e: KeyboardEvent) => {
-      if (e.code === 'Enter' || e.code === 'NumpadEnter') {
-        this.state.paused = false;
-        this.state.score = 0;
-        this.state.playerLevel = 'middle';
-        this.renderScore();
-        document.body.querySelector('.dialog-container')!.remove();
-        document.body.removeEventListener('keyup', handleEnter);
-        this.player?.destroy();
-        document.querySelector('#player')?.remove();
-        this.callLeadAbility?.destroy();
-        this.state.curLevel?.destroy();
-        this.state.curLevel?.restart?.();
-        this.player = new Player(
-          this.state.curLevel as LevelBase,
-          () => this.getPlayerLevel(),
-          (num: number) => this.setScore(num),
-          () => {
-            this.state.playerLevel = 'middle';
-            this.state.score -= 1000;
-            this.renderScore();
-            this.callLeadAbility?.destroy();
-          },
-          () => this.playerDead(),
-        );
-        this.player.init();
-
-        if (this.state.curLevel?.name === '3') {
-          this.state.score = this.state.initialScore;
+      const handleEnter = (e: KeyboardEvent) => {
+        if (e.code === 'Enter' || e.code === 'NumpadEnter') {
+          this.state.paused = false;
+          this.state.score -= 1000;
+          if (this.state.score < 0) this.state.score = 0;
+          this.state.playerLevel = 'middle';
           this.renderScore();
+          document.body.querySelector('.dialog-container')!.remove();
+          document.body.removeEventListener('keyup', handleEnter);
+          this.player?.destroy();
+          document.querySelector('#player')?.remove();
+          this.callLeadAbility?.destroy();
+          this.state.curLevel?.destroy();
+          this.state.curLevel?.restart?.();
+          this.player = new Player(
+            this.state.curLevel as LevelBase,
+            () => this.getPlayerLevel(),
+            (num: number) => this.setScore(num),
+            () => {
+              this.state.playerLevel = 'middle';
+              this.state.score -= 1000;
+              this.renderScore();
+              this.callLeadAbility?.destroy();
+            },
+            () => this.playerDead(),
+          );
+          this.player.init();
+
+          if (this.state.curLevel?.name === '3') {
+            this.state.score = this.state.initialScore;
+            this.renderScore();
+          }
         }
-      }
-    };
-    document.body.appendChild(div);
-    document.body.addEventListener('keyup', handleEnter);
-    document.body
-      .querySelector('#you-are-dead')
-      ?.addEventListener('submit', (e) => {
-        e.preventDefault();
-        handleEnter({ code: 'Enter' } as KeyboardEvent);
-      });
+      };
+      document.body.appendChild(div);
+      document.body.addEventListener('keyup', handleEnter);
+      document.body
+        .querySelector('#you-are-dead')
+        ?.addEventListener('submit', (e) => {
+          e.preventDefault();
+          handleEnter({ code: 'Enter' } as KeyboardEvent);
+        });
+    }, 1000);
   }
 
   private handleFatality(isOn: boolean) {
@@ -234,6 +237,7 @@ export class GameController {
           },
           this.state.curLevel!,
           (isOn: boolean) => this.handleFatality(isOn),
+          () => this.state.score,
         );
       }
 
@@ -343,8 +347,8 @@ export class GameController {
 
     this.state.levelIdx = idx;
     this.setLevel(this.state.levels[idx]);
-    //this.state.levelIdx = 2;
-    //this.setLevel(this.state.levels[2]);
+    //this.state.levelIdx = 4;
+    //this.setLevel(this.state.levels[4]);
     this.handleTick();
     setTimeout(() => {
       this.shield?.init();

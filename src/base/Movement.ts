@@ -93,9 +93,10 @@ export class Movement extends BaseScene {
       .filter((obstacle) => {
         if (
           obstacle.getParams().type.includes('client') ||
-          obstacle.state === 'destroyed'
-        )
+          (obstacle.state === 'destroyed' && obstacle.getParams().type !== 'question')
+        ) {
           return false;
+        }
 
         const [obstTopLeft, _, obstBottomRight, obstBottomLeft] =
           getObstacleCoords(obstacle);
@@ -125,7 +126,7 @@ export class Movement extends BaseScene {
       .filter((obstacle) => {
         if (
           obstacle.getParams().type.includes('client') ||
-          obstacle.state === 'destroyed'
+          (obstacle.state === 'destroyed' && obstacle.getParams().type !== 'question')
         )
           return false;
 

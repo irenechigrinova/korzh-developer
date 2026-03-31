@@ -38,9 +38,7 @@ export class Player extends Movement {
       item.node?.remove();
     });
     this.fireballs = [];
-    setTimeout(() => {
-      this.onDie();
-    }, 1000);
+    this.onDie();
   }
 
   constructor(
