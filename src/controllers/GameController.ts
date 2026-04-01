@@ -347,8 +347,8 @@ export class GameController {
 
     this.state.levelIdx = idx;
     this.setLevel(this.state.levels[idx]);
-    //this.state.levelIdx = 4;
-    //this.setLevel(this.state.levels[4]);
+    //this.state.levelIdx = 3;
+    //this.setLevel(this.state.levels[3]);
     this.handleTick();
     setTimeout(() => {
       this.shield?.init();

@@ -93,7 +93,8 @@ export class Movement extends BaseScene {
       .filter((obstacle) => {
         if (
           obstacle.getParams().type.includes('client') ||
-          (obstacle.state === 'destroyed' && obstacle.getParams().type !== 'question')
+          (obstacle.state === 'destroyed' &&
+            obstacle.getParams().type !== 'question')
         ) {
           return false;
         }
@@ -126,7 +127,8 @@ export class Movement extends BaseScene {
       .filter((obstacle) => {
         if (
           obstacle.getParams().type.includes('client') ||
-          (obstacle.state === 'destroyed' && obstacle.getParams().type !== 'question')
+          (obstacle.state === 'destroyed' &&
+            obstacle.getParams().type !== 'question')
         )
           return false;
 
@@ -313,7 +315,7 @@ export class Movement extends BaseScene {
         obstacle.state === 'destroyed' &&
         !this.isJumping
       ) {
-        if (this.dieCallback) this.dieCallback();
+        if (this.dieCallback) this.dieCallback(this.isEnemy ? true : undefined);
         return;
       }
 

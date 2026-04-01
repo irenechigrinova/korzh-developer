@@ -42,7 +42,7 @@ const prepareObstacles = (
     new Obstacle('brick-transparent', 1094, 0, remove, 107, 121),
     new Obstacle('void', 215, 0, remove, 120),
     new Obstacle('void', 455, 0, remove, 120),
-    new Obstacle('void', 695, 0, remove, 120),
+    new Obstacle('void', 695, 119, remove, 120),
   ],
   '-2400': [
     new Obstacle('brick-transparent', 734, 0, remove, 123, 41),
@@ -103,10 +103,7 @@ const prepareEnemies = (self: Level) => ({
     new Bug(self, { bottom: 0, left: 940 }),
     new Bug(self, { bottom: 0, left: 960 }),
   ],
-  '-3600': [
-    new Task(self, { bottom: 119, left: 574 }),
-    new Task(self, { bottom: 119, left: 820 }),
-  ],
+  '-3600': [],
 
   '-2400': [
     new Boss(self, 'ermakov'),
